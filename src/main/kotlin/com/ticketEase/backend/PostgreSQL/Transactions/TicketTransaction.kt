@@ -14,7 +14,7 @@ interface TicketTransaction : CRUDOperations<Ticket, Long>{
 
     suspend fun createTicket(eventId: Long,row : Int? = null,column: Int? = null, status: StatusTicket = StatusTicket.SALE, price : Double) : Ticket?
 
-    suspend fun selectByEvent(eventId : Long) : List<Ticket>
+    suspend fun selectByEvent(eventId : Long, status: StatusTicket = StatusTicket.SALE) : List<Ticket>
 
     suspend fun filterEventByCost(lowPrice: Double, highPrice : Double) : List<Long>
 }

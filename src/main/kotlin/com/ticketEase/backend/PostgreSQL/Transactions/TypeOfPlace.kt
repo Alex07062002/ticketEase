@@ -1,6 +1,17 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
-enum class TypeOfPlace(name: String){
-        WITH("место"),
-        WITHOUT("без места")
+enum class TypeOfPlace {
+    WITH,
+    WITHOUT;
+
+    override fun toString(): String {
+        return if (this == WITH) {
+            "with"
+        } else{
+            "without"
+        }
     }
+}
+
+
+

@@ -3,7 +3,6 @@ package com.ticketEase.backend.PostgreSQL.DatabaseFactory
 import com.example.DataClasses.CartTable
 import com.example.DataClasses.Event.EventTable
 import com.example.DataClasses.Favorites.FavoriteTable
-import com.example.DataClasses.Person.organizer
 import com.example.DataClasses.Person.OrganizerTable
 import com.example.DataClasses.PlaceTable
 import com.example.DataClasses.Ticket.TicketTable
@@ -23,7 +22,7 @@ object DataBaseFactory {
         val password = PASSWORD
         val database = Database.connect(jdbcURL, driverClassName,user, password)
         transaction(database) {
-            SchemaUtils.create(organizer, CartTable, EventTable, FavoriteTable, OrganizerTable, PlaceTimeTable,
+            SchemaUtils.create(OrganizerTable, CartTable, EventTable, FavoriteTable, OrganizerTable, PlaceTimeTable,
                 PlaceTable, TicketTable)
         }
     }

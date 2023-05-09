@@ -4,6 +4,7 @@ import com.example.DataClasses.Ticket.StatusTicket
 import com.example.DataClasses.Ticket.Ticket
 import com.example.DataClasses.Ticket.TicketTable
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
+import mu.KLogging
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.LoggerFactory
@@ -15,7 +16,7 @@ class TicketTransactionImpl : TicketTransaction {
     private val ticket = TicketTable
 
     private fun ticketDBToTicketEntity(rs : ResultRow) = Ticket(
-        id = rs[ticket.ticketId].value,
+        id = rs[ticket.id].value,
         eventId = rs[ticket.eventId],
         buyerId = rs[ticket.buyerId],
         row = rs[ticket.row],
@@ -25,28 +26,28 @@ class TicketTransactionImpl : TicketTransaction {
     )
 
     override suspend fun selectEventByBuyer(buyerId: Long): Query = dbQuery{
-        logger.info("Ticket select event by buyer transaction is started")
+        logger.info("Ticket select event by buyer id $buyerId transaction is started")
         ticket.slice(ticket.eventId).select{ticket.buyerId eq buyerId}
     }
 
     override suspend fun selectTicket(eventId: Long, row: Int, column: Int): Ticket? = dbQuery{
-        logger.info("Ticket select transaction is started.")
+        logger.info("Ticket select by event $eventId transaction is started.")
         ticket.select{ticket.eventId eq eventId; ticket.row eq row; ticket.column eq column}
             .map(::ticketDBToTicketEntity).singleOrNull()
     }
 
     override suspend fun updateTicket(ticketId: Long, status: StatusTicket?, buyerId: Long?): Boolean = dbQuery {
-        logger.info("Ticket update transaction is started.")
+        logger.info("Ticket $ticketId update transaction is started.")
         val updateTicket = selectById(ticketId)
         if (updateTicket != null){
-        ticket.update ({ticket.ticketId eq ticketId}){
+        ticket.update ({ticket.id eq ticketId}){
                 it[this.status] = status ?: updateTicket.status
                 it[this.buyerId] = buyerId ?: updateTicket.buyerId
             }
-            logger.info("Ticket update transaction is ended.")
+            logger.info("Ticket $ticketId update transaction is ended.")
             return@dbQuery true
         }else{
-            logger.warn("Ticket isn't find")
+            logger.warn("Ticket $ticketId isn't find")
             return@dbQuery false
         }
     }
@@ -63,8 +64,8 @@ class TicketTransactionImpl : TicketTransaction {
         insertStatement.resultedValues?.singleOrNull()?.let(::ticketDBToTicketEntity)
     }
 
-    override suspend fun selectByEvent(eventId: Long): List<Ticket>  = dbQuery{
-        logger.info("Ticket select by event transaction is started.")
+    override suspend fun selectByEvent(eventId: Long,status: StatusTicket): List<Ticket>  = dbQuery{
+        logger.info("Ticket select tickets by event $eventId transaction is started.")
         ticket.select(ticket.eventId eq eventId).map(::ticketDBToTicketEntity)
     }
 
@@ -80,12 +81,12 @@ class TicketTransactionImpl : TicketTransaction {
     }
 
     override suspend fun delete(id: Long): Boolean = dbQuery {
-        logger.info("Ticket delete transaction is started.")
-        ticket.deleteWhere {ticket.ticketId eq id}
+        logger.info("Ticket $id delete transaction is started.")
+        ticket.deleteWhere {ticket.id eq id}
     } > 0
 
     override suspend fun selectById(id: Long): Ticket? = dbQuery {
-        logger.info("Ticket select by id transaction is started.")
-        ticket.select(ticket.ticketId eq id).map(::ticketDBToTicketEntity).singleOrNull()
+        logger.info("Ticket $id select by id transaction is started.")
+        ticket.select(ticket.id eq id).map(::ticketDBToTicketEntity).singleOrNull()
     }
 }

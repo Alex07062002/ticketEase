@@ -15,7 +15,6 @@ data class Buyer(val id : Long,
                  val city : Cities)
 
 object BuyerTable : LongIdTable("buyer"){
-    val buyerId = long("id").autoIncrement().entityId()
     val name = varchar("name", 25)
     val surname = varchar("surname", 50)
     val login = varchar("login",50).uniqueIndex()

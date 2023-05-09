@@ -17,9 +17,8 @@ data class Event(val id : Long,
                  val description : String? = null)
 
 object EventTable : LongIdTable("event"){
-    val eventId = long("id").autoIncrement().entityId()
-    val placeTimeId = long("placeTime_id").references(PlaceTimeTable.placeTimeId).nullable()
-    val organizerId = long("organizer_id").references(OrganizerTable.OrganizerId)
+    val placeTimeId = long("placeTime_id").references(PlaceTimeTable.id).nullable()
+    val organizerId = long("organizer_id").references(OrganizerTable.id)
     val name = varchar("name", 100)
     val genre = enumeration("genre",GenreList::class)
     val type = enumeration("type",TypeList::class)

@@ -8,9 +8,9 @@ import com.example.DataClasses.Person.Buyer
 import com.example.DataClasses.Person.Cities
 
 interface EventTransaction :
-    CRUDOperations<Event, Long> { // TODO использование одинаковых методов для разных Id (primary key, foreign key) -> потеря в семантике, выигрыш в объёме кода
+    CRUDOperations<Event, Long> {
 
-        suspend fun createNewEvent(organizerId : Long,name : String,genre : GenreList,
+        suspend fun createEvent(organizerId : Long,name : String,genre : GenreList,
                                    type : TypeList, status : StatusEvent = StatusEvent.CREATE): Event?
 
         suspend fun selectEventByGenreOrType(genre : GenreList, type : TypeList):List<Event> //TODO Bridge: eventId from placeTime by date and from ticket by cost

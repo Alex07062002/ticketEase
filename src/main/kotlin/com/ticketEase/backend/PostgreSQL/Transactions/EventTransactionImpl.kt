@@ -3,6 +3,7 @@ package com.ticketEase.backend.PostgreSQL.Transactions
 import com.example.DataClasses.Event.*
 import com.example.DataClasses.Person.Cities
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
+import mu.KLogging
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
@@ -14,7 +15,7 @@ class EventTransactionImpl : EventTransaction {
     private val event = EventTable
 
     private fun eventDBToEventEntity(rs : ResultRow) = Event(
-        id = rs[event.eventId].value,
+        id = rs[event.id].value,
         placeTimeId = rs[event.placeTimeId],
         organizerId = rs[event.organizerId],
         name = rs[event.name],
@@ -25,7 +26,7 @@ class EventTransactionImpl : EventTransaction {
         description = rs[event.description]
     )
 
-    override suspend fun createNewEvent(
+    override suspend fun createEvent(
         organizerId: Long,
         name: String,
         genre: GenreList,
@@ -50,18 +51,19 @@ class EventTransactionImpl : EventTransaction {
 
     override suspend fun selectGenreForPreferences(buyerId : Long): List<GenreList>  = dbQuery{
         logger.info("Event select genre transaction is started.")
-        event.slice(event.genre).select{event.eventId inSubQuery (TicketTransactionImpl().selectEventByBuyer(buyerId))}
+        event.slice(event.genre).select{event.id inSubQuery (TicketTransactionImpl().selectEventByBuyer(buyerId))}
             .orderBy(event.genre.count()).limit(5).map{it[event.genre]}
     }
 
     override suspend fun selectEventByCity(city: Cities): List<Event>  = dbQuery{
-        logger.info("Event select by city transaction is started.")
+        logger.info("Event select by city $city transaction is started.")
         event.select(event.organizerId inSubQuery (OrganizerTransactionImpl().selectOrganizerByCity(city)))
+            .orderBy(event.placeTimeId to SortOrder.ASC)
             .map(::eventDBToEventEntity)
-    }
+    } // TODO change orderBy
 
     override suspend fun selectEventByPlaceTime(placeTimeId: Long): List<Event>  = dbQuery{
-        logger.info("Event select by date transaction is started.")
+        logger.info("Event select by placeTime id $placeTimeId transaction is started.")
         event.select(event.placeTimeId eq placeTimeId).map(::eventDBToEventEntity)
     }
 
@@ -71,13 +73,13 @@ class EventTransactionImpl : EventTransaction {
     }
 
     override suspend fun delete(id: Long): Boolean  = dbQuery{
-        logger.info("Event delete transaction is started.")
-        event.deleteWhere { event.eventId eq id}
+        logger.info("Event $id delete transaction is started.")
+        event.deleteWhere { event.id eq id}
     } > 0
 
     override suspend fun selectById(id: Long): Event?  = dbQuery{
-        logger.info("Event select by id transaction is started.")
-        event.select(event.eventId eq id).map(::eventDBToEventEntity).singleOrNull()
+        logger.info("Event $id select by id transaction is started.")
+        event.select(event.id eq id).map(::eventDBToEventEntity).singleOrNull()
     }
 }
 

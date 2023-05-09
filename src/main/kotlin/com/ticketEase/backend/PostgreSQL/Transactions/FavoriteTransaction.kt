@@ -5,7 +5,7 @@ import com.example.DataClasses.Favorites.StatusFavorite
 
 interface FavoriteTransaction : CRUDOperations<Favorite,Pair<Long,Long>> {
 
-    suspend fun selectEventFromFavorite() : List<Long>
+    suspend fun selectEventFromFavorite(buyerId: Long) : List<Long>
 
     suspend fun updateFavorite(buyerId : Long, eventId : Long, status : StatusFavorite) : Boolean
 

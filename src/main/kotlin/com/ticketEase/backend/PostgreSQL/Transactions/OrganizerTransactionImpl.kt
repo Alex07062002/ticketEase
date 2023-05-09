@@ -2,6 +2,7 @@ package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Person.*
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
+import mu.KLogging
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.LoggerFactory
@@ -12,7 +13,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     private val organizer = OrganizerTable
 
     private fun organizerDBToOrganizerEntity(rs : ResultRow) = Organizer(
-        id = rs[organizer.OrganizerId].value,
+        id = rs[organizer.id].value,
         name = rs[organizer.name],
         surname = rs[organizer.surname],
         login = rs[organizer.login],
@@ -24,8 +25,8 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     )
 
     override suspend fun updateCityPerson(id : Long, city: Cities): Boolean = dbQuery {
-        logger.info("Organizer update city transaction is started.")
-        organizer.update ({organizer.OrganizerId eq id}){
+        logger.info("Organizer $id update city to $city transaction is started.")
+        organizer.update ({organizer.id eq id}){
             it[this.city] = city
         }
     } > 0
@@ -38,21 +39,21 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         mobile: String?,
         status : StatusOrganizer?
     ): Boolean = dbQuery{
-        logger.info("Organizer update transaction is started.")
+        logger.info("Organizer $organizerId update transaction is started.")
         val organizerUpdate = selectById(organizerId)
         if (organizerUpdate != null) {
-            organizer.update({ organizer.OrganizerId eq organizerId}) {
+            organizer.update({ organizer.id eq organizerId}) {
                 it[this.name] = name ?: organizerUpdate.name
                 it[this.surname] = surname ?: organizerUpdate.surname
                 it[this.email] = email ?: organizerUpdate.email
                 it[this.mobile] = mobile ?: organizerUpdate.mobile
                 it[this.status] = status ?: organizerUpdate.status
             }
-            logger.info("Buyer update transaction is ended.")
+            logger.info("Organizer $organizerId update transaction is ended.")
             return@dbQuery true
         }
         else{
-            logger.warn("Update buyer isn't find.")
+            logger.warn("Organizer $organizerId isn't find.")
             return@dbQuery false
         }
     }
@@ -82,8 +83,8 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     }
 
     override suspend fun selectOrganizerByCity(city : Cities): Query = dbQuery{
-        logger.info("Organizer select organizer id by city is started.")
-        organizer.slice(organizer.OrganizerId).select(organizer.city eq city)
+        logger.info("Organizer select organizer id by city $city is started.")
+        organizer.slice(organizer.id).select(organizer.city eq city)
     }
 
     override suspend fun selectAll(): List<Organizer>  = dbQuery{
@@ -92,12 +93,12 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     }
 
     override suspend fun delete(id: Long): Boolean = dbQuery {
-        logger.info("Organizer delete transaction is started.")
-        organizer.deleteWhere{organizer.OrganizerId eq id}
+        logger.info("Organizer $id delete transaction is started.")
+        organizer.deleteWhere{organizer.id eq id}
     } > 0
 
     override suspend fun selectById(id: Long): Organizer?  = dbQuery{
-        logger.info("Organizer select by id transaction is started.")
-        organizer.select(organizer.OrganizerId eq id).map(::organizerDBToOrganizerEntity).singleOrNull()
+        logger.info("Organizer $id select by id transaction is started.")
+        organizer.select(organizer.id eq id).map(::organizerDBToOrganizerEntity).singleOrNull()
     }
 }

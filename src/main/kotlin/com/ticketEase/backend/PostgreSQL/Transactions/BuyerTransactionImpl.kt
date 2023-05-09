@@ -4,9 +4,11 @@ import com.example.DataClasses.Person.Buyer
 import com.example.DataClasses.Person.BuyerTable
 import com.example.DataClasses.Person.Cities
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
+import mu.KLogging
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.LoggerFactory
+
 
 class BuyerTransactionImpl : BuyerTransaction {
 
@@ -14,7 +16,7 @@ class BuyerTransactionImpl : BuyerTransaction {
     private val buyer = BuyerTable
 
     private fun buyerDBToBuyerEntity(rs : ResultRow) = Buyer(
-        id = rs[buyer.buyerId].value,
+        id = rs[buyer.id].value,
         name = rs[buyer.name],
         surname = rs[buyer.surname],
         login = rs[buyer.login],
@@ -25,8 +27,8 @@ class BuyerTransactionImpl : BuyerTransaction {
     )
 
     override suspend fun updateCityPerson(id : Long, city: Cities): Boolean = dbQuery{
-        logger.info("Buyer update city transaction is started.")
-        buyer.update ({buyer.buyerId eq id}){
+        logger.info("Buyer $id update city to $city transaction is started.")
+        buyer.update ({buyer.id eq id}){
             it[this.city] = city
         } > 0
     }
@@ -41,17 +43,17 @@ class BuyerTransactionImpl : BuyerTransaction {
         logger.info("Buyer update transaction is started.")
         val updateBuyer = selectById(buyerId)
         if (updateBuyer != null) {
-            buyer.update({ buyer.buyerId eq buyerId}) {
+            buyer.update({ buyer.id eq buyerId}) {
                 it[this.name] = name ?: updateBuyer.name
                 it[this.surname] = surname ?: updateBuyer.surname
                 it[this.email] = email ?: updateBuyer.email
                 it[this.mobile] = mobile ?: updateBuyer.mobile
             }
-            logger.info("Buyer update transaction is ended.")
+            logger.info("Buyer $buyerId update transaction is ended.")
             return@dbQuery true
         }
         else{
-            logger.warn("Update buyer isn't find.")
+            logger.warn("Buyer $buyerId isn't find.")
             return@dbQuery false
         }
     }
@@ -83,12 +85,12 @@ class BuyerTransactionImpl : BuyerTransaction {
     }
 
     override suspend fun delete(id: Long): Boolean = dbQuery {
-        logger.info("Buyer delete transaction is started.")
-        buyer.deleteWhere {buyer.buyerId eq id}
+        logger.info("Buyer $id delete transaction is started.")
+        buyer.deleteWhere {buyer.id eq id}
     } > 0
 
     override suspend fun selectById(id: Long): Buyer? = dbQuery {
-        logger.info("Buyer select by id transaction is started.")
-        buyer.select{buyer.buyerId eq id}.map(::buyerDBToBuyerEntity).singleOrNull()
+        logger.info("Buyer $id select by id transaction is started.")
+        buyer.select{buyer.id eq id}.map(::buyerDBToBuyerEntity).singleOrNull()
     }
 }

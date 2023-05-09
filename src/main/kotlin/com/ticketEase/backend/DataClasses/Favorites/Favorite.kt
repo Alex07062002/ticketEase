@@ -13,8 +13,8 @@ data class Favorite(val buyerId : Long,
                     val status : StatusFavorite)
 
 object FavoriteTable : Table("favorites"){
-    val buyerId = long("buyer_id").references(BuyerTable.buyerId)
-    val eventId = long("event_id").references(EventTable.eventId)
+    val buyerId = long("buyer_id").references(BuyerTable.id)
+    val eventId = long("event_id").references(EventTable.id)
     val status = enumeration("status",StatusFavorite::class)
     override val primaryKey = PrimaryKey(buyerId, eventId,name = "FavoritePK")
 }

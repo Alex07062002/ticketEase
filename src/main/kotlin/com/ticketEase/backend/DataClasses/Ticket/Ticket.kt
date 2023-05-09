@@ -15,9 +15,8 @@ data class Ticket(val id : Long,
                   val price : Double)
 
 object TicketTable : LongIdTable("ticket"){
-    val ticketId = long("id").autoIncrement().entityId()
-    val eventId = long("event_id").references(EventTable.eventId)
-    val buyerId = long("buyer_id").references(BuyerTable.buyerId).nullable()
+    val eventId = long("event_id").references(EventTable.id)
+    val buyerId = long("buyer_id").references(BuyerTable.id).nullable()
     val row = integer("row").nullable()
     val column = integer("column").nullable()
     val price = double("price")

@@ -17,8 +17,8 @@ data class Cart(val buyerId: Long,
                 val orderDate : Instant? = null)
 
 object CartTable : Table("cart"){
-    val buyerId = long("buyer_id").references(BuyerTable.buyerId)
-    val ticketId = long("ticket_id").references(TicketTable.ticketId)
+    val buyerId = long("buyer_id").references(BuyerTable.id)
+    val ticketId = long("ticket_id").references(TicketTable.id)
     val orderDate = timestamp("orderDate")
     override val primaryKey = PrimaryKey(buyerId, ticketId, name = "CartPK")
 
