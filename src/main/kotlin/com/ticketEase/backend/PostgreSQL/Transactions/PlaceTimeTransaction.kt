@@ -1,17 +1,17 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
-import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTime
+import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeDTO
 import com.ticketEase.backend.DataClasses.PlaceTime.StatusPlaceTime
 import java.time.Instant
 
-interface PlaceTimeTransaction : CRUDOperations<PlaceTime, Long> {
-    suspend fun createPlaceTime(placeId: Long, date : Instant, status: StatusPlaceTime) : PlaceTime?
+interface PlaceTimeTransaction : CRUDOperations<PlaceTimeDTO, Long> {
+    suspend fun createPlaceTime(placeTime : PlaceTimeDTO) : PlaceTimeDTO?
 
-    suspend fun selectByPlace(placeId : Long) : List<PlaceTime>
+    suspend fun selectByPlace(placeId : Long) : List<PlaceTimeDTO>
 
-    suspend fun updatePlaceTime(placeTimeId : Long, status : StatusPlaceTime) : Boolean
+    suspend fun updatePlaceTime(placeTime : PlaceTimeDTO) : PlaceTimeDTO?
 
-    suspend fun selectIdByDate(date : Instant) : List<PlaceTime>
+    suspend fun selectIdByDate(date : Instant) : List<PlaceTimeDTO>
 
     suspend fun selectDateById(placeTimeId : Long) : Instant?
 }

@@ -1,20 +1,20 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Ticket.StatusTicket
-import com.example.DataClasses.Ticket.Ticket
+import com.example.DataClasses.Ticket.TicketDTO
 import org.jetbrains.exposed.sql.Query
 
-interface TicketTransaction : CRUDOperations<Ticket, Long>{
+interface TicketTransaction : CRUDOperations<TicketDTO, Long>{
 
     suspend fun selectEventByBuyer(buyerId : Long) : Query
 
-    suspend fun selectTicket(eventId : Long, row : Int, column : Int) : Ticket?
+    suspend fun selectTicket(eventId : Long, row : Int?, column : Int?) : TicketDTO?
 
-    suspend fun updateTicket(ticketId : Long, status : StatusTicket?, buyerId: Long?) : Boolean
+    suspend fun updateTicket(ticketDTO: TicketDTO) : TicketDTO?
 
-    suspend fun createTicket(eventId: Long,row : Int? = null,column: Int? = null, status: StatusTicket = StatusTicket.SALE, price : Double) : Ticket?
+    suspend fun createTicket(ticketDTO: TicketDTO) : TicketDTO?
 
-    suspend fun selectByEvent(eventId : Long, status: StatusTicket = StatusTicket.SALE) : List<Ticket>
+    suspend fun selectByEvent(eventId : Long, status: StatusTicket = StatusTicket.SALE) : List<TicketDTO>
 
     suspend fun filterEventByCost(lowPrice: Double, highPrice : Double) : List<Long>
 }

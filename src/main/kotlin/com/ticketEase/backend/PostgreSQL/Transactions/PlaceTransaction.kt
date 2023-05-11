@@ -1,14 +1,13 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
-import com.example.DataClasses.NewPlace
-import com.example.DataClasses.Place
+import com.example.DataClasses.PlaceDTO
 
-interface PlaceTransaction : CRUDOperations<Place, Long> {
+interface PlaceTransaction : CRUDOperations<PlaceDTO, Long> {
 
-    suspend fun createPlace(place : NewPlace) : Place?
+    suspend fun createPlace(place : PlaceDTO) : PlaceDTO?
 
-    suspend fun selectOneOfTypePlace(type: String) : List<Place>
+    suspend fun selectOneOfTypePlace(type: String) : List<PlaceDTO>
 
-    suspend fun updatePlace(placeId : Long, name : String?, capacity : Long?, numRow : Int?, numColumn : Int?) : Boolean
+    suspend fun updatePlace(updatePlace : PlaceDTO) : PlaceDTO?
 
 }

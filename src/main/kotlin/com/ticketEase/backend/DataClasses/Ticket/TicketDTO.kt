@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 @Serializable
-data class Ticket(val id : Long,
-                  val eventId : Long,
-                  val buyerId : Long? = null,
-                  val row : Int? = null,
-                  val column : Int? = null,
-                  val status : StatusTicket,
-                  val price : Double)
+data class TicketDTO(val id : Long?,
+                     val eventId : Long,
+                     val buyerId : Long? = null,
+                     val row : Int? = null,
+                     val column : Int? = null,
+                     val status : StatusTicket = StatusTicket.SALE,
+                     val price : Double)
 
 object TicketTable : LongIdTable("ticket"){
     val eventId = long("event_id").references(EventTable.id)

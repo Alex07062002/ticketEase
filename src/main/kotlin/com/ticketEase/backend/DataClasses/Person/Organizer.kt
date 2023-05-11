@@ -1,10 +1,11 @@
 package com.example.DataClasses.Person
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
-
-
+@Serializable
+data class OrganizerRequest(val login: String,val password: String)
+@Serializable
+data class OrganizerResponse(val login: String, val token : String)
 @Serializable
 data class Organizer(
     val id: Long,

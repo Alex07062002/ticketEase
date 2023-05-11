@@ -1,7 +1,6 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
-import com.example.DataClasses.NewPlace
-import com.example.DataClasses.Place
+import com.example.DataClasses.PlaceDTO
 import com.example.DataClasses.PlaceTable
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
@@ -14,7 +13,7 @@ class PlaceTransactionImpl : PlaceTransaction {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val place = PlaceTable
 
-    private fun placeDBToPlaceEntity(rs : ResultRow) =  Place(
+    private fun placeDBToPlaceEntity(rs : ResultRow) =  PlaceDTO(
         id = rs[place.id].value,
         name = rs[place.name],
         capacity = rs[place.capacity],
@@ -22,7 +21,7 @@ class PlaceTransactionImpl : PlaceTransaction {
         numColumn = rs[place.numColumn]
     )
 
-    override suspend fun createPlace(placeAdd : NewPlace) : Place? = dbQuery{ //TODO Fix!!!
+    override suspend fun createPlace(placeAdd : PlaceDTO) : PlaceDTO? = dbQuery{
         logger.info("Place create transaction is started.")
         val insertStatement = place.insert {
             it[place.name] = placeAdd.name
@@ -33,7 +32,7 @@ class PlaceTransactionImpl : PlaceTransaction {
         insertStatement.resultedValues?.singleOrNull()?.let(::placeDBToPlaceEntity)
     }
 
-    override suspend fun selectOneOfTypePlace(type: String): List<Place>
+    override suspend fun selectOneOfTypePlace(type: String): List<PlaceDTO>
     = dbQuery{
         logger.info("Place select by type place transaction is started.")
         if (type == TypeOfPlace.WITH.toString()) place.select{place.numRow neq null;place.numColumn neq null}
@@ -41,26 +40,20 @@ class PlaceTransactionImpl : PlaceTransaction {
         place.select{place.numRow eq null; place.numColumn eq null}.map(::placeDBToPlaceEntity)
     }
 
-    override suspend fun updatePlace(placeId: Long, name: String?, capacity: Long?, numRow: Int?, numColumn: Int?): Boolean =
+    override suspend fun updatePlace(placeUp : PlaceDTO): PlaceDTO? {
         dbQuery {
-        logger.info("Place $placeId update transaction is started.")
-        val updatePlace = selectById(placeId)
-        if (updatePlace != null){
-            place.update({place.id eq placeId}){
-                it[this.name] = name ?: updatePlace.name
-                it[this.capacity] = capacity ?: updatePlace.capacity
-                it[this.numRow] = numRow ?: updatePlace.numRow
-                it[this.numColumn] = numColumn ?: updatePlace.numColumn
+            logger.info("Place ${placeUp.id} update transaction is started.")
+            place.update({ place.id eq placeUp.id }) {
+                it[this.name] = placeUp.name
+                it[this.capacity] = placeUp.capacity
+                it[this.numRow] = placeUp.numRow
+                it[this.numColumn] = placeUp.numColumn
             }
-            logger.info("Place $placeId update transaction is ended.")
-            return@dbQuery true
-        }else{
-            logger.warn("Place $placeId isn't find")
-            return@dbQuery false
         }
+       return placeUp.id?.let {selectById(it)}
     }
 
-    override suspend fun selectAll(): List<Place> = dbQuery {
+    override suspend fun selectAll(): List<PlaceDTO> = dbQuery {
         logger.info("Place select all transaction is started.")
         place.selectAll().map(::placeDBToPlaceEntity)
     }
@@ -70,7 +63,7 @@ class PlaceTransactionImpl : PlaceTransaction {
         place.deleteWhere{place.id eq id}
     } > 0
 
-    override suspend fun selectById(id: Long): Place? = dbQuery {
+    override suspend fun selectById(id: Long): PlaceDTO? = dbQuery {
         logger.info("Place $id select by id transaction is started.")
         place.select(place.id eq id).map(::placeDBToPlaceEntity).singleOrNull()
     }

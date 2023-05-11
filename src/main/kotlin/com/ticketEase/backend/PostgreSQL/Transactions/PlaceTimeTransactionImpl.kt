@@ -1,6 +1,6 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
-import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTime
+import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeDTO
 import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeTable
 import com.ticketEase.backend.DataClasses.PlaceTime.StatusPlaceTime
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
@@ -14,37 +14,41 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val placeTime = PlaceTimeTable
 
-    private fun placeTimeDBToPlaceTimeEntity(rs : ResultRow) = PlaceTime(
+    private fun placeTimeDBToPlaceTimeEntity(rs: ResultRow) = PlaceTimeDTO(
         id = rs[placeTime.id].value,
         placeId = rs[placeTime.placeId],
-        date =rs[placeTime.date],
+        date = rs[placeTime.date],
         status = rs[placeTime.status]
     )
 
-    override suspend fun createPlaceTime(placeId: Long, date: Instant, status: StatusPlaceTime): PlaceTime?  = dbQuery{
+    override suspend fun createPlaceTime(placeTimeDTO: PlaceTimeDTO): PlaceTimeDTO? = dbQuery {
         logger.info("PlaceTime create transaction is started.")
         val insertStatement = placeTime.insert {
-            it[placeTime.placeId] = placeId
-            it[placeTime.date] = date
-            it[placeTime.status] = status
+            it[placeTime.placeId] = placeTimeDTO.placeId
+            it[placeTime.date] = placeTimeDTO.date
+            it[placeTime.status] = placeTimeDTO.status
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::placeTimeDBToPlaceTimeEntity)
     }
 
 
-    override suspend fun selectByPlace(placeId: Long): List<PlaceTime>  = dbQuery{
+    override suspend fun selectByPlace(placeId: Long): List<PlaceTimeDTO> = dbQuery {
         logger.info("PlaceTime select by place $placeId transaction is started.")
         placeTime.select(placeTime.placeId eq placeId).map(::placeTimeDBToPlaceTimeEntity)
     }
 
-    override suspend fun updatePlaceTime(placeTimeId: Long, status: StatusPlaceTime): Boolean  = dbQuery{
-        logger.info("PlaceTime $placeTimeId update transaction is started.")
-        placeTime.update({placeTime.id eq placeTimeId}) {
-            it[this.status] = status
+    override suspend fun updatePlaceTime(placeTimeDTO: PlaceTimeDTO): PlaceTimeDTO? {
+        dbQuery {
+            logger.info("PlaceTime update transaction is started.")
+            placeTime.update({ placeTime.id eq placeTimeDTO.id}) {
+                it[this.status] = placeTimeDTO.status
+            }
         }
-    } > 0
+        return placeTimeDTO.id?.let { selectById(it) }
+    }
 
-    override suspend fun selectIdByDate(date: Instant): List<PlaceTime>  = dbQuery{
+
+    override suspend fun selectIdByDate(date: Instant): List<PlaceTimeDTO>  = dbQuery{
         logger.info("PlaceTime select by date $date transaction is started.")
         placeTime.select(placeTime.date eq date).map(::placeTimeDBToPlaceTimeEntity)
     }
@@ -54,7 +58,7 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
         placeTime.slice(placeTime.date).select(placeTime.id eq placeTimeId).map{it[placeTime.date]}.singleOrNull()
     }
 
-    override suspend fun selectAll(): List<PlaceTime> = dbQuery {
+    override suspend fun selectAll(): List<PlaceTimeDTO> = dbQuery {
         logger.info("PlaceTime select all transaction is started.")
         placeTime.selectAll().map(::placeTimeDBToPlaceTimeEntity)
     }
@@ -64,7 +68,7 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
         placeTime.deleteWhere{placeTime.id eq id}
     } > 0
 
-    override suspend fun selectById(id: Long): PlaceTime?  = dbQuery{
+    override suspend fun selectById(id: Long): PlaceTimeDTO?  = dbQuery{
         logger.info("PlaceTime $id select by id transaction is started.")
         placeTime.select(placeTime.id eq id).map(::placeTimeDBToPlaceTimeEntity).singleOrNull()
     }

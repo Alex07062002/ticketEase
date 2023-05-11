@@ -6,18 +6,18 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 @Serializable
-data class Event(val id : Long,
-                 val placeTimeId : Long? = null,
-                 val organizerId : Long,
-                 val name : String,
-                 val genre : GenreList,
-                 val type : TypeList,
-                 val status : StatusEvent,
-                 val nameGroup : String? = null,
-                 val description : String? = null)
+data class EventDTO(val id : Long?,
+                    val placeTimeId : Long,
+                    val organizerId : Long,
+                    val name : String,
+                    val genre : GenreList,
+                    val type : TypeList,
+                    val status : StatusEvent = StatusEvent.CREATE,
+                    val nameGroup : String? = null,
+                    val description : String? = null)
 
 object EventTable : LongIdTable("event"){
-    val placeTimeId = long("placeTime_id").references(PlaceTimeTable.id).nullable()
+    val placeTimeId = long("placeTime_id").references(PlaceTimeTable.id)
     val organizerId = long("organizer_id").references(OrganizerTable.id)
     val name = varchar("name", 100)
     val genre = enumeration("genre",GenreList::class)

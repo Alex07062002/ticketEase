@@ -1,25 +1,16 @@
 package com.example.DataClasses
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-
 @Serializable
-data class Place(
-    val id : Long,
+data class PlaceDTO(
+    val id : Long?,
     val name : String,
-    val capacity : Long,
-    val numRow : Int?,
-    val numColumn : Int?)
-
-@Serializable
-data class NewPlace( // TODO Bad practice
-    val id : Long? = null,
-    val name : String,
-    val capacity : Long,
-    val numRow : Int? = null,
-    val numColumn : Int? = null)
+    val capacity: Long,
+    val numRow: Int?,
+    val numColumn: Int?
+)
 
 object PlaceTable : LongIdTable("place"){
     val name = varchar("name", 50)

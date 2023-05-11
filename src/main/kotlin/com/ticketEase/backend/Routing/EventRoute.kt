@@ -1,77 +1,90 @@
 package com.ticketEase.backend.Routing
 
-import com.example.DataClasses.Event.Event
+import com.example.DataClasses.Event.EventDTO
 import com.example.DataClasses.Event.GenreList
-import com.example.DataClasses.Event.StatusEvent
 import com.example.DataClasses.Event.TypeList
 import com.example.DataClasses.Person.Cities
-import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory
-import com.ticketEase.backend.PostgreSQL.Transactions.OrganizerTransactionImpl
-import com.ticketEase.backend.PostgreSQL.Transactions.TicketTransactionImpl
+import com.ticketEase.backend.PostgreSQL.Transactions.EventTransactionImpl
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.plugins.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
-
-/**
-override suspend fun createEvent(
-    organizerId: Long,
-    name: String,
-    genre: GenreList,
-    type: TypeList,
-    status: StatusEvent
-): Event? = DataBaseFactory.dbQuery {
-    logger.info("Event create transaction is started.")
-    val insertStatement = event.insert {
-        it[event.organizerId] = organizerId
-        it[event.name] = name
-        it[event.genre] = genre
-        it[event.type] = type
-        it[event.status] = status
-    }
-    insertStatement.resultedValues?.singleOrNull()?.let(::eventDBToEventEntity)
-}
-
-override suspend fun selectEventByGenreOrType(genre: GenreList, type: TypeList): List<Event> = DataBaseFactory.dbQuery {
-    logger.info("Event select by genre and type transaction is started.")
-    event.select { event.genre eq genre;event.type eq type }.map(::eventDBToEventEntity)
-}
-
-override suspend fun selectGenreForPreferences(buyerId : Long): List<GenreList>  = DataBaseFactory.dbQuery {
-    logger.info("Event select genre transaction is started.")
-    event.slice(event.genre).select { event.id inSubQuery (TicketTransactionImpl().selectEventByBuyer(buyerId)) }
-        .orderBy(event.genre.count()).limit(5).map { it[event.genre] }
-}
-
-override suspend fun selectEventByCity(city: Cities): List<Event>  = DataBaseFactory.dbQuery {
-    logger.info("Event select by city $city transaction is started.")
-    event.select(event.organizerId inSubQuery (OrganizerTransactionImpl().selectOrganizerByCity(city)))
-        .orderBy(event.placeTimeId to SortOrder.ASC)
-        .map(::eventDBToEventEntity)
-} // TODO change orderBy
-
-override suspend fun selectEventByPlaceTime(placeTimeId: Long): List<Event>  = DataBaseFactory.dbQuery {
-    logger.info("Event select by placeTime id $placeTimeId transaction is started.")
-    event.select(event.placeTimeId eq placeTimeId).map(::eventDBToEventEntity)
-}
-
-override suspend fun selectAll(): List<Event>  = DataBaseFactory.dbQuery {
-    logger.info("Event select all transaction is started.")
-    event.selectAll().map(::eventDBToEventEntity)
-}
-
-override suspend fun delete(id: Long): Boolean  = DataBaseFactory.dbQuery {
-    logger.info("Event $id delete transaction is started.")
-    event.deleteWhere { event.id eq id }
-} > 0
-
-override suspend fun selectById(id: Long): Event?  = DataBaseFactory.dbQuery {
-    logger.info("Event $id select by id transaction is started.")
-    event.select(event.id eq id).map(::eventDBToEventEntity).singleOrNull()
-}
-        **/
 
 @Suppress("unused")
 fun Route.eventRoute(){
 
+    val eventService = EventTransactionImpl()
+
+    route("/events"){
+        post{
+            call.respond(HttpStatusCode.OK,eventService.selectAll())
+        }
+        post("/{id}"){
+            val eventId = call.parameters["id"] ?: kotlin.run{
+                throw NotFoundException("Not found event with this id")
+            }
+            val event = eventService.selectById(eventId.toLong())
+            if (event == null) call.respond(
+                HttpStatusCode.NotFound,
+                "Event isn't find."
+            ) else call.respond(HttpStatusCode.OK, event)
+        }
+        delete("/{id}") {
+            val eventId = call.parameters["id"] ?: kotlin.run{
+                throw NotFoundException("Not found event with this id")
+            }
+            eventService.delete(eventId.toLong())
+            call.respond("Event is deleted.")
+        }
+        post("/create"){
+            val parameters = call.receive<EventDTO>()
+            if (parameters.id != null) {
+                call.respond(HttpStatusCode.BadRequest, "Event isn't created.")
+            } else {
+                val event = eventService.createEvent(parameters)
+                if (event == null) call.respond(HttpStatusCode.BadRequest, "Event isn't created") else
+                    call.respond(HttpStatusCode.Created, event)
+            }
+        }
+        post("/{genre}/{type}"){
+            val genre = call.parameters["genre"]
+                if (GenreList.values().any {it.toString() == genre}) genre ?: kotlin.run{
+                throw NotFoundException("Not found genre")
+            }
+            val type = call.parameters["type"]
+                if (TypeList.values().any{it.toString() == type}) type ?: kotlin.run{
+                throw NotFoundException("Not found type")
+            }
+            val eventList = eventService.selectEventByGenreOrType(
+                GenreList.valueOf(type.orEmpty()),
+                TypeList.valueOf(type.orEmpty()))
+            call.respond(HttpStatusCode.OK,eventList)
+        }
+        post("/{buyerId}"){
+            val buyerId = call.parameters["buyerId"] ?: kotlin.run{
+                throw NotFoundException("Not found buyer id")
+            }
+            val eventList = eventService.selectGenreForPreferences(buyerId.toLong())
+            if (eventList.isNotEmpty()) call.respond(HttpStatusCode.OK,eventList) else
+                call.respond(HttpStatusCode.BadRequest, "Buyer isn't found")
+        }
+        post("/{placeTimeId}"){
+            val placeTimeId = call.parameters["placeTimeId"] ?: kotlin.run{
+                throw NotFoundException("Not found placeTime id")
+            }
+            val eventList = eventService.selectEventByPlaceTime(placeTimeId.toLong())
+            if (eventList.isNotEmpty()) call.respond(HttpStatusCode.OK,eventList) else
+                call.respond(HttpStatusCode.BadRequest, "PlaceTime isn't found")
+        }
+        post("/{city}"){
+            val city = call.parameters["city"]
+            if (Cities.values().any{it.toString() == city}) city ?: kotlin.run{
+                throw NotFoundException("Not found city")
+            }
+            val eventList = eventService.selectEventByCity(Cities.valueOf(city.orEmpty()))
+            call.respond(HttpStatusCode.OK,eventList)
+        }
+    }
 }

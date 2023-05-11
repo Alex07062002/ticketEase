@@ -8,11 +8,11 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
 @Serializable
-data class PlaceTime(val id : Long,
-                     val placeId : Long,
-                    @Serializable(with = DateSerializer::class)
-                     val date : Instant,
-                     val status : StatusPlaceTime)
+data class PlaceTimeDTO(val id: Long?,
+                        val placeId : Long,
+                        @Serializable(with = DateSerializer::class)
+                        val date : Instant,
+                        val status : StatusPlaceTime)
 
 object PlaceTimeTable : LongIdTable("placeTime") {
     val placeId = long("place_id").references(PlaceTable.id)
