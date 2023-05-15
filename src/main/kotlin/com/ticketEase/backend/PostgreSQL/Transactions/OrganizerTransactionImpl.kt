@@ -1,6 +1,7 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Person.*
+import com.ticketEase.backend.Auth.Hashing.HashServiceImpl
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
 import mu.KLogging
 import org.jetbrains.exposed.sql.*
@@ -11,17 +12,20 @@ class OrganizerTransactionImpl : OrganizerTransaction {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val organizer = OrganizerTable
+    private val hashing = HashServiceImpl()
 
     private fun organizerDBToOrganizerEntity(rs : ResultRow) = Organizer(
         id = rs[organizer.id].value,
         name = rs[organizer.name],
         surname = rs[organizer.surname],
         login = rs[organizer.login],
-        password = rs[organizer.password], // TODO Maybe change because use JWTToken
+        password = rs[organizer.password],
         email = rs[organizer.email],
         mobile = rs[organizer.mobile],
         city = rs[organizer.city],
-        status = rs[organizer.status]
+        status = rs[organizer.status],
+        secret = rs[organizer.secret]
+
     )
 
     override suspend fun updateCityPerson(id : Long, city: Cities): Boolean = dbQuery {
@@ -31,53 +35,36 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         }
     } > 0
 
-    override suspend fun updateParamsOrganizer(
-        organizerId : Long,
-        name: String?,
-        surname: String?,
-        email: String?,
-        mobile: String?,
-        status : StatusOrganizer?
-    ): Boolean = dbQuery{
-        logger.info("Organizer $organizerId update transaction is started.")
-        val organizerUpdate = selectById(organizerId)
-        if (organizerUpdate != null) {
-            organizer.update({ organizer.id eq organizerId}) {
-                it[this.name] = name ?: organizerUpdate.name
-                it[this.surname] = surname ?: organizerUpdate.surname
-                it[this.email] = email ?: organizerUpdate.email
-                it[this.mobile] = mobile ?: organizerUpdate.mobile
-                it[this.status] = status ?: organizerUpdate.status
-            }
-            logger.info("Organizer $organizerId update transaction is ended.")
-            return@dbQuery true
-        }
-        else{
-            logger.warn("Organizer $organizerId isn't find.")
-            return@dbQuery false
-        }
+    override suspend fun selectByLogin(login: String): Organizer?  = dbQuery{
+        organizer.select(organizer.login eq login).map(::organizerDBToOrganizerEntity).singleOrNull()
     }
 
-    override suspend fun createOrganizer(
-        name: String,
-        surname: String,
-        login: String,
-        password: String,
-        email: String,
-        mobile: String?,
-        city: Cities,
-        status: StatusOrganizer
-    ) : Organizer?  = dbQuery{
+    override suspend fun updateParamsOrganizer(organizerUp: Organizer): Organizer? {
+        dbQuery {
+            logger.info("Organizer ${organizerUp.id} update transaction is started.")
+            organizer.update({ organizer.id eq organizerUp.id }) {
+                it[this.name] = organizerUp.name
+                it[this.surname] = organizerUp.surname
+                it[this.email] = organizerUp.email
+                it[this.mobile] = organizerUp.mobile
+                it[this.status] = organizerUp.status
+            }
+        }
+        return selectById(organizerUp.id)
+    }
+    override suspend fun createOrganizer(organizerCreate: Organizer) : Organizer?  = dbQuery{
         logger.info("Organizer create transaction is started.")
+        val pswdHash = hashing.generateSaltedHash(organizerCreate.password)
         val insertStatement = organizer.insert {
-           it[organizer.name] = name
-           it[organizer.surname] = surname
-           it[organizer.login] = login
-           it[organizer.password] =password
-           it[organizer.email] = email
-           it[organizer.mobile] = mobile
-            it[organizer.city] = city
-           it[organizer.status] = status
+           it[organizer.name] = organizerCreate.name
+           it[organizer.surname] = organizerCreate.surname
+           it[organizer.login] = organizerCreate.login
+           it[organizer.password] = pswdHash.hash
+           it[organizer.email] = organizerCreate.email
+           it[organizer.mobile] = organizerCreate.mobile
+            it[organizer.city] = organizerCreate.city
+           it[organizer.status] = organizerCreate.status
+            it[organizer.secret] = pswdHash.secret
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::organizerDBToOrganizerEntity)
     }
@@ -98,7 +85,6 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     } > 0
 
     override suspend fun selectById(id: Long): Organizer?  = dbQuery{
-        logger.info("Organizer $id select by id transaction is started.")
-        organizer.select(organizer.id eq id).map(::organizerDBToOrganizerEntity).singleOrNull()
+        organizer.select {organizer.id eq id}.map(::organizerDBToOrganizerEntity).singleOrNull()
     }
 }

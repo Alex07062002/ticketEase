@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 @Serializable
-data class UserRequest(val login: String,val password: String)
+data class BuyerRequest(val login: String,val password: String)
 @Serializable
-data class UserResponse(val login: String, val token : String)
+data class BuyerResponse(val token : String)
 @Serializable
 data class Buyer(val id : Long,
                  val name : String,
@@ -15,7 +15,8 @@ data class Buyer(val id : Long,
                  val password : String,
                  val email: String,
                  val mobile : String? = null,
-                 val city : Cities)
+                 val city : Cities,
+                 val secret : String)
 
 object BuyerTable : LongIdTable("buyer"){
     val name = varchar("name", 25)
@@ -25,4 +26,5 @@ object BuyerTable : LongIdTable("buyer"){
     val email = varchar("email",40)
     val mobile = varchar("mobile",25).nullable()
     val city = enumeration("city",Cities::class)
+    val secret = varchar("secret", 50)
 }

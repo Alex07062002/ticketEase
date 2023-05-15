@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 @Serializable
 data class OrganizerRequest(val login: String,val password: String)
 @Serializable
-data class OrganizerResponse(val login: String, val token : String)
+data class OrganizerResponse(val token : String)
 @Serializable
 data class Organizer(
     val id: Long,
@@ -16,7 +16,8 @@ data class Organizer(
     val email: String,
     val mobile: String? = null,
     val city: Cities,
-    val status: StatusOrganizer)
+    val status: StatusOrganizer,
+    val secret : String)
 
 object OrganizerTable : LongIdTable("organizer"){
     val name = varchar("name", 25)
@@ -27,4 +28,5 @@ object OrganizerTable : LongIdTable("organizer"){
     val mobile = varchar("mobile", 20).nullable()
     val city = enumeration("city",Cities::class)
     val status = enumeration("status", StatusOrganizer::class)
+    val secret = varchar("secret", 50)
 }
