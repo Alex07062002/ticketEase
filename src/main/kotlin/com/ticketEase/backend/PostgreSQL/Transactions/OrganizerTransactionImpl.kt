@@ -3,7 +3,6 @@ package com.ticketEase.backend.PostgreSQL.Transactions
 import com.example.DataClasses.Person.*
 import com.ticketEase.backend.Auth.Hashing.HashServiceImpl
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
-import mu.KLogging
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.LoggerFactory

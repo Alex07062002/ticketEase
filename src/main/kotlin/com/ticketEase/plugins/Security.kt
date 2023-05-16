@@ -6,12 +6,12 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.ticketEase.backend.Auth.token.TokenConfig
 import io.ktor.server.application.*
+import io.ktor.server.config.*
 
-fun Application.configureSecurity(config : TokenConfig) {
+fun Application.configureSecurity(config : TokenConfig, resource: HoconApplicationConfig) {
     authentication {
         jwt {
-//            realm = this@configureSecurity.environment.config.property("jwt.realm").getString()
-            realm = realm // TODO Fix this
+            realm = resource.property("jwt.realm").toString()
             verifier(
                 JWT
                     .require(Algorithm.HMAC256(config.secret))

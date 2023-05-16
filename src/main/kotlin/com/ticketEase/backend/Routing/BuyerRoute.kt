@@ -22,6 +22,8 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
     val hashService = HashServiceImpl()
 
     route("/organizers"){
+
+
         post{
             call.respond(HttpStatusCode.OK,buyerService.selectAll())
         }

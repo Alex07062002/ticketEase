@@ -1,0 +1,1412 @@
+openapi: "3.0.3"
+info:
+  title: "ticketEase API"
+  description: "ticketEase API"
+  version: "1.0.0"
+servers:
+- url: "https://ticketEase"
+paths:
+  /:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Hello World!"
+  /carts:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/CartDTO"
+  /carts/{buyerId}:
+    delete:
+      description: ""
+      parameters:
+      - name: "buyerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "ticketId"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Cart is deleted."
+    post:
+      description: ""
+      parameters:
+      - name: "buyerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "ticketId"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Cart isn't find."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CartDTO"
+  /carts/{{buyerId}/update:
+    put:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/CartDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Cart isn't updated."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CartDTO"
+  /carts/create:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/CartDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Cart isn't created."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CartDTO"
+  /events:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/EventDTO"
+  /events/{id}:
+    delete:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Event is deleted."
+    post:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Event isn't find."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/EventDTO"
+  /events/{buyerId}:
+    post:
+      description: ""
+      parameters:
+      - name: "buyerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  type: "string"
+                  enum:
+                  - "genre"
+                  - "Matinee"
+                  - "Festival"
+                  - "Opera"
+                  - "Ballet"
+                  - "Musical"
+                  - "Theatre"
+                  - "Instrumental"
+                  - "Vocal"
+                  - "Dance"
+                  - "PoetryEvening"
+                  - "Picture"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Buyer isn't found"
+  /events/{placeTimeId}:
+    post:
+      description: ""
+      parameters:
+      - name: "placeTimeId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/EventDTO"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "PlaceTime isn't found"
+  /events/{city}:
+    post:
+      description: ""
+      parameters:
+      - name: "city"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/EventDTO"
+  /events/{genre}/{type}:
+    post:
+      description: ""
+      parameters:
+      - name: "genre"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "type"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/EventDTO"
+  /events/create:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/EventDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Event isn't created"
+                Example#2:
+                  value: "Event isn't created."
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/EventDTO"
+  /favorites:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/FavoriteDTO"
+  /favorites/{buyerId}:
+    delete:
+      description: ""
+      parameters:
+      - name: "buyerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "eventId"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Favorite is deleted."
+    post:
+      description: ""
+      parameters:
+      - name: "buyerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "eventId"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Favorite isn't find."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FavoriteDTO"
+  /favorites/{{buyerId}/update:
+    put:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/FavoriteDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Favorite isn't updated."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FavoriteDTO"
+  /favorites/create:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/FavoriteDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Favorite isn't created."
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FavoriteDTO"
+  /filter/{low}/{high}:
+    post:
+      description: ""
+      parameters:
+      - name: "low"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "high"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  type: "integer"
+                  format: "int64"
+  /organizers:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Buyer"
+  /organizers/{id}:
+    delete:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Buyer is deleted."
+  /organizers/{city}:
+    post:
+      description: ""
+      parameters:
+      - name: "city"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+  /organizers/{id}/{city}:
+    post:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "city"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /organizers/{id}/update:
+    put:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/Buyer"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Buyer isn't updated."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /organizers/create:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/Buyer"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Buyer isn't created."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /organizers/signIn:
+    put:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/BuyerRequest"
+        required: true
+      responses:
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Incorrect username or password"
+                Example#2:
+                  value: "Invalid parameters."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/OrganizerResponse"
+  /placeTimes:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/PlaceTimeDTO"
+  /placeTimes/{id}:
+    delete:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "PlaceTime is deleted."
+    post:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "PlaceTime not find"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PlaceTimeDTO"
+  /placeTimes/create:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/PlaceTimeDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "PlaceTime isn't created."
+                Example#2:
+                  value: "Invalid data"
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PlaceTimeDTO"
+  /placeTimes/select/{date}:
+    post:
+      description: ""
+      parameters:
+      - name: "date"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+  /placeTimes/select/{id}:
+    post:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+  /placeTimes/select/{placeId}:
+    post:
+      description: ""
+      parameters:
+      - name: "placeId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+  /placeTimes/select/update:
+    put:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/PlaceTimeDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "PlaceTime isn't updated."
+                Example#2:
+                  value: "Invalid data"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PlaceTimeDTO"
+  /places:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/PlaceDTO"
+  /places/{id}:
+    delete:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Place is deleted."
+    post:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Place isn't find."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PlaceDTO"
+  /places/{id}/update:
+    put:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/PlaceDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Place isn't updated"
+                Example#2:
+                  value: "Place isn't updated"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PlaceDTO"
+  /places/create:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/PlaceDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Unit"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Place isn't created"
+                Example#2:
+                  value: "Place isn't created."
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PlaceDTO"
+  /places/select/{type}:
+    post:
+      description: ""
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/PlaceDTO"
+  /tickets:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/TicketDTO"
+  /tickets/{id}:
+    delete:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Ticket is deleted."
+    post:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Ticket isn't find."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TicketDTO"
+  /tickets/{buyerId}:
+    post:
+      description: ""
+      parameters:
+      - name: "buyerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Query"
+  /tickets/{eventId}:
+    post:
+      description: ""
+      parameters:
+      - name: "eventId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Ticket isn't found."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TicketDTO"
+  /tickets/{eventId}/{row}/{column}:
+    post:
+      description: ""
+      parameters:
+      - name: "eventId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "row"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "column"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Ticket isn't found."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TicketDTO"
+  /tickets/{eventId}/search:
+    post:
+      description: ""
+      parameters:
+      - name: "eventId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/TicketDTO"
+  /tickets/{id}/update:
+    put:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/TicketDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Ticket isn't updated"
+                Example#2:
+                  value: "Ticket isn't updated."
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TicketDTO"
+  /tickets/create:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/TicketDTO"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Ticket isn't created"
+                Example#2:
+                  value: "Ticket isn't created."
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TicketDTO"
+  /json/jackson:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /json/kotlinx-serialization:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+components:
+  schemas:
+    Instant:
+      type: "object"
+      properties: {}
+    CartDTO:
+      type: "object"
+      properties:
+        buyerId:
+          type: "integer"
+          format: "int64"
+        ticketId:
+          type: "integer"
+          format: "int64"
+        orderDate:
+          $ref: "#/components/schemas/Instant"
+    EventDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        placeTimeId:
+          type: "integer"
+          format: "int64"
+        organizerId:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        genre:
+          type: "string"
+          enum:
+          - "genre"
+          - "Matinee"
+          - "Festival"
+          - "Opera"
+          - "Ballet"
+          - "Musical"
+          - "Theatre"
+          - "Instrumental"
+          - "Vocal"
+          - "Dance"
+          - "PoetryEvening"
+          - "Picture"
+        type:
+          type: "string"
+          enum:
+          - "type"
+          - "Exhibition"
+          - "Concert"
+          - "Performance"
+          - "Excursion"
+          - "Feast"
+        status:
+          type: "string"
+          enum:
+          - "status"
+          - "CREATE"
+          - "CREATED"
+          - "ISGONE"
+          - "DELETE"
+        nameGroup:
+          type: "string"
+        description:
+          type: "string"
+    FavoriteDTO:
+      type: "object"
+      properties:
+        buyerId:
+          type: "integer"
+          format: "int64"
+        eventId:
+          type: "integer"
+          format: "int64"
+        status:
+          type: "string"
+          enum:
+          - "status"
+          - "IS"
+          - "DELETE"
+    Buyer:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        surname:
+          type: "string"
+        login:
+          type: "string"
+        password:
+          type: "string"
+        email:
+          type: "string"
+        mobile:
+          type: "string"
+        city:
+          type: "string"
+          enum:
+          - "city"
+          - "Voronezh"
+          - "Moscow"
+          - "SaintPetersburg"
+        secret:
+          type: "string"
+    BuyerRequest:
+      type: "object"
+      properties:
+        login:
+          type: "string"
+        password:
+          type: "string"
+    OrganizerResponse:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+    PlaceTimeDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        placeId:
+          type: "integer"
+          format: "int64"
+        date:
+          $ref: "#/components/schemas/Instant"
+        status:
+          type: "string"
+          enum:
+          - "status"
+          - "FREE"
+          - "BUSY"
+          - "FIX"
+    PlaceDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        capacity:
+          type: "integer"
+          format: "int64"
+        numRow:
+          type: "integer"
+          format: "int32"
+        numColumn:
+          type: "integer"
+          format: "int32"
+    Unit:
+      type: "object"
+      properties: {}
+    TicketDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        eventId:
+          type: "integer"
+          format: "int64"
+        buyerId:
+          type: "integer"
+          format: "int64"
+        row:
+          type: "integer"
+          format: "int32"
+        column:
+          type: "integer"
+          format: "int32"
+        status:
+          type: "string"
+          enum:
+          - "status"
+          - "SALE"
+          - "BOOK"
+          - "SOLD"
+          - "DELETE"
+        price:
+          type: "number"
+          format: "double"
+    FieldSet:
+      type: "object"
+      properties: {}
+    Expression:
+      type: "object"
+      properties: {}
+    ForUpdateOption:
+      type: "object"
+      properties:
+        querySuffix:
+          type: "string"
+    Pair:
+      type: "object"
+      properties: {}
+    IColumnType:
+      type: "object"
+      properties: {}
+    ForeignKeyConstraint:
+      type: "object"
+      properties:
+        references:
+          type: "object"
+        target:
+          type: "object"
+        targetTable:
+          $ref: "#/components/schemas/Table"
+        from:
+          type: "object"
+        fromTable:
+          $ref: "#/components/schemas/Table"
+    Column:
+      type: "object"
+      properties:
+        table:
+          $ref: "#/components/schemas/Table"
+        name:
+          type: "string"
+        columnType:
+          $ref: "#/components/schemas/IColumnType"
+        foreignKey:
+          $ref: "#/components/schemas/ForeignKeyConstraint"
+        defaultValueFun:
+          type: "object"
+    PrimaryKey:
+      type: "object"
+      properties:
+        columns:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Column"
+    Table:
+      type: "object"
+      properties:
+        tableName:
+          type: "string"
+        primaryKey:
+          $ref: "#/components/schemas/PrimaryKey"
+    Query:
+      type: "object"
+      properties:
+        set:
+          $ref: "#/components/schemas/FieldSet"
+        distinct:
+          type: "boolean"
+        groupedByColumns:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Expression"
+        having:
+          type: "boolean"
+        forUpdate:
+          $ref: "#/components/schemas/ForUpdateOption"
+        where:
+          type: "boolean"
+        orderByExpressions:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Pair"
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int64"
+        fetchSize:
+          type: "integer"
+          format: "int32"
+        type:
+          type: "string"
+          enum:
+          - "group"
+          - "INSERT"
+          - "UPDATE"
+          - "DELETE"
+          - "SELECT"
+          - "CREATE"
+          - "ALTER"
+          - "TRUNCATE"
+          - "DROP"
+          - "GRANT"
+          - "EXEC"
+          - "OTHER"
+        targets:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Table"
