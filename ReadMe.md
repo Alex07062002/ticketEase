@@ -4,6 +4,4 @@
 Сервер проверяет адекватность данных, поступающих с presentation layer, и отправляет данные в базу данных PostgreSQL.
 Также сервер контролирует выдачу JWT Tokens пользователям.
 # Осталось реализовать
-JWT Token generate algorithm
-Распределение по пользователям
-BuyerRoute and OrganizerRoute
+docker-container
