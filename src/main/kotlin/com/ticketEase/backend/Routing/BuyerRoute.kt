@@ -37,24 +37,19 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             val buyer = buyerService.createBuyer(parameters)
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't created.") else
                 call.respond(
-                    HttpStatusCode.OK,tokenService.generate(
+                    HttpStatusCode.OK,BuyerResponse(tokenService.generate(
                     config = tokenConfig,
                     TokenClaim(
                         name = "userId",
                         value = parameters.id.toString())
-                    ))
+                    )))
         }
         put("/{id}/update"){
             val parameters = call.receive<Buyer>()
             val buyer = buyerService.updateParamsBuyer(parameters)
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't updated.") else
                 call.respond(
-                    HttpStatusCode.OK,tokenService.generate(
-                    config = tokenConfig,
-                    TokenClaim(
-                        name = "userId",
-                        value = parameters.id.toString())
-                    ))
+                    HttpStatusCode.OK,BuyerResponse(buyer.password))
         }
         put("/signIn") {
             val parameters = call.receive<BuyerRequest>()
@@ -71,18 +66,11 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                     println("Entered hash: ${DigestUtils.sha256Hex("${buyer.secret}${parameters.password}")}, Hashed PW: ${buyer.password}")
                     call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
                 }
-                val token = tokenService.generate(
-                    config = tokenConfig,
-                    TokenClaim(
-                        name = "userId",
-                        value = buyer.id.toString()
-                    )
-                )
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    message = OrganizerResponse(
-                        token = token
+                    message = BuyerResponse(
+                        token = buyer.password
                     )
                 )
             }
@@ -93,7 +81,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             }
             val response = buyerService.selectByLogin(loginFromQuery)
             if (response == null) call.respond(HttpStatusCode.OK, "Login not found") else
-                call.respond(HttpStatusCode.Conflict, "Login is created")
+                call.respond(HttpStatusCode.Conflict, "Login is created earlier")
         }
         post("/{id}/{city}"){
             val idFromQuery = call.parameters["id"] ?: kotlin.run {

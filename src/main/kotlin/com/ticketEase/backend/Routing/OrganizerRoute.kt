@@ -39,21 +39,17 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
             val parameters = call.receive<Organizer>()
             val organizer = organizerService.createOrganizer(parameters)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't created.") else
-                call.respond(HttpStatusCode.OK,tokenService.generate(
+                call.respond(HttpStatusCode.OK,OrganizerResponse(tokenService.generate(
                         config = tokenConfig,
                 TokenClaim(
                 name = "userId",
-                value = parameters.id.toString())))
+                value = parameters.id.toString()))))
         }
         put("/{id}/update"){
             val parameters = call.receive<Organizer>()
             val organizer = organizerService.updateParamsOrganizer(parameters)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't updated.") else
-                call.respond(HttpStatusCode.OK,tokenService.generate(
-                    config = tokenConfig,
-                    TokenClaim(
-                        name = "userId",
-                        value = parameters.id.toString())))
+                call.respond(HttpStatusCode.OK,OrganizerResponse(organizer.password))
         }
         put("/signIn") {
             val parameters = call.receive<OrganizerRequest>()
@@ -70,18 +66,11 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
                     println("Entered hash: ${DigestUtils.sha256Hex("${organizer.secret}${parameters.password}")}, Hashed PW: ${organizer.password}")
                     call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
                 }
-                val token = tokenService.generate(
-                    config = tokenConfig,
-                    TokenClaim(
-                        name = "userId",
-                        value = organizer.id.toString()
-                    )
-                )
 
                 call.respond(
                     status = HttpStatusCode.OK,
                     message = OrganizerResponse(
-                        token = token
+                        token = organizer.password
                     )
                 )
             }
