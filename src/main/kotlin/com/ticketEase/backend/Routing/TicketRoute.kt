@@ -85,11 +85,14 @@ import io.ktor.server.routing.*
               if (ticket == null) call.respond(HttpStatusCode.NotFound, "Ticket isn't found.") else
                   call.respond(HttpStatusCode.OK,ticket)
           }
-          post("/{eventId}/search"){
+          post("/{eventId}/{status}/search"){
               val eventId = call.parameters["eventId"] ?: kotlin.run{
                   throw NotFoundException("Not found ticket with this event id")
               }
-              val ticketList = ticketService.selectByEvent(eventId.toLong(),StatusTicket.SALE)
+              val statusType = call.parameters["status"] ?: kotlin.run{
+              throw NotFoundException("Not found ticket with this event id")
+          }
+              val ticketList = ticketService.selectByEvent(eventId.toLong(),StatusTicket.valueOf(statusType))
               call.respond(HttpStatusCode.OK,ticketList)
           }
           }
