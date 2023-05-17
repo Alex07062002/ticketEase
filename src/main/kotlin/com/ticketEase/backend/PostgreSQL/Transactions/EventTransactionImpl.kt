@@ -18,9 +18,9 @@ class EventTransactionImpl : EventTransaction {
         placeTimeId = rs[event.placeTimeId],
         organizerId = rs[event.organizerId],
         name = rs[event.name],
-        genre = rs[event.genre],
-        type = rs[event.type],
-        status = rs[event.status],
+        genre = GenreList.valueOf(rs[event.genre]),
+        type = TypeList.valueOf(rs[event.type]),
+        status = StatusEvent.valueOf(rs[event.status]),
         nameGroup = rs[event.nameGroup],
         description = rs[event.description]
     )
@@ -31,9 +31,9 @@ class EventTransactionImpl : EventTransaction {
             it[event.placeTimeId] = eventDTO.placeTimeId
             it[event.organizerId] = eventDTO.organizerId
             it[event.name] = eventDTO.name
-            it[event.genre] = eventDTO.genre
-            it[event.type] = eventDTO.type
-            it[event.status] = eventDTO.status
+            it[event.genre] = eventDTO.genre.toString()
+            it[event.type] = eventDTO.type.toString()
+            it[event.status] = eventDTO.status.toString()
             it[event.nameGroup] = eventDTO.nameGroup
             it[event.description] = eventDTO.description
         }
@@ -42,13 +42,13 @@ class EventTransactionImpl : EventTransaction {
 
     override suspend fun selectEventByGenreOrType(genre: GenreList, type: TypeList): List<EventDTO> = dbQuery {
         logger.info("Event select by genre and type transaction is started.")
-        event.select{event.genre eq genre;event.type eq type}.map(::eventDBToEventEntity)
+        event.select{event.genre eq genre.toString();event.type eq type.toString()}.map(::eventDBToEventEntity)
     }
 
     override suspend fun selectGenreForPreferences(buyerId : Long): List<GenreList>  = dbQuery{
         logger.info("Event select genre transaction is started.")
         event.slice(event.genre).select{event.id inSubQuery (TicketTransactionImpl().selectEventByBuyer(buyerId))}
-            .orderBy(event.genre.count()).limit(5).map{it[event.genre]}
+            .orderBy(event.genre.count()).limit(5).map{it[event.genre]}.map{GenreList.valueOf(it)}// TODO Testing
     }
 
     override suspend fun selectEventByCity(city: Cities): List<EventDTO>  = dbQuery{

@@ -58,7 +58,7 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
         put("/signIn") {
             val parameters = call.receive<OrganizerRequest>()
             val organizer = organizerService.selectByLogin(parameters.login)
-            if (organizer == null) call.respond(HttpStatusCode.Conflict, "Invalid parameters.") else {
+            if (organizer?.secret == null) call.respond(HttpStatusCode.Conflict, "Invalid parameters.") else {
                 val isValidPassword = hashService.verify(
                     value = parameters.password,
                     saltedHash = Hash(
@@ -85,6 +85,14 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
                     )
                 )
             }
+        }
+        post("/{login}"){
+            val loginFromQuery = call.parameters["login"] ?: kotlin.run {
+                throw NotFoundException("Please provide a valid organizer id")
+            }
+            val response = organizerService.selectByLogin(loginFromQuery)
+            if (response == null) call.respond(HttpStatusCode.OK, "Login not found") else
+                call.respond(HttpStatusCode.Conflict, "Login is created")
         }
         post("/{city}"){
             val cityFromQuery = call.parameters["city"] ?: kotlin.run {

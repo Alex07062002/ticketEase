@@ -20,6 +20,6 @@ object TicketTable : LongIdTable("ticket"){
     val row = integer("row").nullable()
     val column = integer("column").nullable()
     val price = double("price")
-    val status = enumeration("status",StatusTicket::class)
+    val status = varchar("status",30)
 }
 

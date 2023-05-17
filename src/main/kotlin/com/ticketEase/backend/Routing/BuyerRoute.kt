@@ -21,9 +21,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
     val tokenService = JwtTokenService()
     val hashService = HashServiceImpl()
 
-    route("/organizers"){
-
-
+    route("/buyers"){
         post{
             call.respond(HttpStatusCode.OK,buyerService.selectAll())
         }
@@ -61,7 +59,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
         put("/signIn") {
             val parameters = call.receive<BuyerRequest>()
             val buyer = buyerService.selectByLogin(parameters.login)
-            if (buyer == null) call.respond(HttpStatusCode.Conflict, "Invalid parameters.") else {
+            if (buyer?.secret == null) call.respond(HttpStatusCode.Conflict, "Invalid parameters.") else {
                 val isValidPassword = hashService.verify(
                     value = parameters.password,
                     saltedHash = Hash(
@@ -88,6 +86,14 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                     )
                 )
             }
+        }
+        post("/{login}"){
+            val loginFromQuery = call.parameters["login"] ?: kotlin.run {
+                throw NotFoundException("Please provide a valid organizer id")
+            }
+            val response = buyerService.selectByLogin(loginFromQuery)
+            if (response == null) call.respond(HttpStatusCode.OK, "Login not found") else
+                call.respond(HttpStatusCode.Conflict, "Login is created")
         }
         post("/{id}/{city}"){
             val idFromQuery = call.parameters["id"] ?: kotlin.run {

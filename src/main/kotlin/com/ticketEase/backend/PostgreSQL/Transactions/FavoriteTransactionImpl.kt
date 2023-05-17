@@ -2,6 +2,7 @@ package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Favorites.FavoriteDTO
 import com.example.DataClasses.Favorites.FavoriteTable
+import com.example.DataClasses.Favorites.StatusFavorite
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -15,7 +16,7 @@ class FavoriteTransactionImpl : FavoriteTransaction {
     private fun favoriteDBToFavoriteEntity(rs : ResultRow) = FavoriteDTO(
         buyerId = rs[favorite.buyerId],
         eventId = rs[favorite.eventId],
-        status = rs[favorite.status]
+        status = StatusFavorite.valueOf(rs[favorite.status])
     )
 
     override suspend fun createFavorite(favoriteDTO: FavoriteDTO): FavoriteDTO?  = dbQuery{
@@ -36,7 +37,7 @@ class FavoriteTransactionImpl : FavoriteTransaction {
         dbQuery {
             logger.info("Favorite update transaction is started.")
             favorite.update({ favorite.buyerId eq favoriteDTO.buyerId;favorite.eventId eq favoriteDTO.eventId }) {
-                it[status] = favoriteDTO.status
+                it[status] = favoriteDTO.status.toString()
             }
         }
         return selectById(Pair(favoriteDTO.buyerId,favoriteDTO.eventId))

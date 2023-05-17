@@ -22,14 +22,14 @@ class BuyerTransactionImpl : BuyerTransaction {
         password = rs[buyer.password],
         email = rs[buyer.email],
         mobile = rs[buyer.mobile],
-        city = rs[buyer.city],
+        city = Cities.valueOf(rs[buyer.city]),
         secret = rs[buyer.secret]
     )
 
     override suspend fun updateCityPerson(id : Long, city: Cities): Boolean = dbQuery{
         logger.info("Buyer $id update city to $city transaction is started.")
         buyer.update ({buyer.id eq id}){
-            it[this.city] = city
+            it[this.city] = city.toString()
         } > 0
     }
 
@@ -57,9 +57,10 @@ class BuyerTransactionImpl : BuyerTransaction {
             it[buyer.name] = buyerCreate.name
             it[buyer.surname] = buyerCreate.surname
             it[buyer.login] = buyerCreate.login
+            it[buyer.email] = buyerCreate.email
             it[buyer.password] = pswdHash.hash
             it[buyer.mobile] = buyerCreate.mobile
-            it[buyer.city] = buyerCreate.city
+            it[buyer.city] = buyerCreate.city.toString()
             it[buyer.secret] = pswdHash.secret
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::buyerDBToBuyerEntity)

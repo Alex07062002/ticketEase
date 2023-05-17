@@ -18,7 +18,7 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
         id = rs[placeTime.id].value,
         placeId = rs[placeTime.placeId],
         date = rs[placeTime.date],
-        status = rs[placeTime.status]
+        status = StatusPlaceTime.valueOf(rs[placeTime.status])
     )
 
     override suspend fun createPlaceTime(placeTimeDTO: PlaceTimeDTO): PlaceTimeDTO? = dbQuery {
@@ -26,7 +26,7 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
         val insertStatement = placeTime.insert {
             it[placeTime.placeId] = placeTimeDTO.placeId
             it[placeTime.date] = placeTimeDTO.date
-            it[placeTime.status] = placeTimeDTO.status
+            it[placeTime.status] = placeTimeDTO.status.toString()
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::placeTimeDBToPlaceTimeEntity)
     }
@@ -41,7 +41,7 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
         dbQuery {
             logger.info("PlaceTime update transaction is started.")
             placeTime.update({ placeTime.id eq placeTimeDTO.id}) {
-                it[this.status] = placeTimeDTO.status
+                it[this.status] = placeTimeDTO.status.toString()
             }
         }
         return placeTimeDTO.id?.let { selectById(it) }

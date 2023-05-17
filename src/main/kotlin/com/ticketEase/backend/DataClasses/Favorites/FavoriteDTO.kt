@@ -15,6 +15,6 @@ data class FavoriteDTO(val buyerId : Long,
 object FavoriteTable : Table("favorites"){
     val buyerId = long("buyer_id").references(BuyerTable.id)
     val eventId = long("event_id").references(EventTable.id)
-    val status = enumeration("status",StatusFavorite::class)
+    val status = varchar("status",30)
     override val primaryKey = PrimaryKey(buyerId, eventId,name = "FavoritePK")
 }

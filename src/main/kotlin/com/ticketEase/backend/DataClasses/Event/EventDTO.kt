@@ -20,9 +20,9 @@ object EventTable : LongIdTable("event"){
     val placeTimeId = long("placeTime_id").references(PlaceTimeTable.id)
     val organizerId = long("organizer_id").references(OrganizerTable.id)
     val name = varchar("name", 100)
-    val genre = enumeration("genre",GenreList::class)
-    val type = enumeration("type",TypeList::class)
+    val genre = varchar("genre",50)
+    val type = varchar("type",50)
     val nameGroup = varchar("name_group",75).nullable()
     val description = varchar("description", 255).nullable()
-    val status = enumeration("status",StatusEvent::class)
+    val status = varchar("status",30)
 }

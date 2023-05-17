@@ -20,7 +20,7 @@ class TicketTransactionImpl : TicketTransaction {
         buyerId = rs[ticket.buyerId],
         row = rs[ticket.row],
         column = rs[ticket.column],
-        status = rs[ticket.status],
+        status = StatusTicket.valueOf(rs[ticket.status]),
         price = rs[ticket.price]
     )
 
@@ -38,7 +38,7 @@ class TicketTransactionImpl : TicketTransaction {
     override suspend fun updateTicket(ticketDTO: TicketDTO): TicketDTO? {
         dbQuery {
                 ticket.update({ ticket.id eq ticketDTO.id }) {
-                    it[this.status] = ticketDTO.status
+                    it[this.status] = ticketDTO.status.toString()
                     it[this.buyerId] = ticketDTO.buyerId
                 }
         }
@@ -50,7 +50,7 @@ class TicketTransactionImpl : TicketTransaction {
         logger.info("Ticket create transaction is started.")
         val insertStatement = ticket.insert {
             it[this.eventId] = ticketDTO.eventId
-            it[this.status] = ticketDTO.status
+            it[this.status] = ticketDTO.status.toString()
             it[this.row] = ticketDTO.row
             it[this.column] = ticketDTO.column
             it[this.price] = ticketDTO.price
@@ -60,7 +60,7 @@ class TicketTransactionImpl : TicketTransaction {
 
     override suspend fun selectByEvent(eventId: Long,status: StatusTicket): List<TicketDTO>  = dbQuery{
         logger.info("Ticket select tickets by event $eventId transaction is started.")
-        ticket.select{ticket.eventId eq eventId;ticket.status eq status}.map(::ticketDBToTicketEntity)
+        ticket.select{ticket.eventId eq eventId;ticket.status eq status.toString()}.map(::ticketDBToTicketEntity)
     }
 
     override suspend fun filterEventByCost(lowPrice: Double, highPrice: Double): List<Long>  = dbQuery{

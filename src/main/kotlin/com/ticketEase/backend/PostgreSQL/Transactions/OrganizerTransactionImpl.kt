@@ -22,7 +22,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         email = rs[organizer.email],
         mobile = rs[organizer.mobile],
         city = rs[organizer.city],
-        status = rs[organizer.status],
+        status = StatusOrganizer.valueOf(rs[organizer.status]),
         secret = rs[organizer.secret]
 
     )
@@ -46,7 +46,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
                 it[this.surname] = organizerUp.surname
                 it[this.email] = organizerUp.email
                 it[this.mobile] = organizerUp.mobile
-                it[this.status] = organizerUp.status
+                it[this.status] = organizerUp.status.toString()
             }
         }
         return selectById(organizerUp.id)
@@ -62,7 +62,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
            it[organizer.email] = organizerCreate.email
            it[organizer.mobile] = organizerCreate.mobile
             it[organizer.city] = organizerCreate.city
-           it[organizer.status] = organizerCreate.status
+           it[organizer.status] = organizerCreate.status.toString()
             it[organizer.secret] = pswdHash.secret
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::organizerDBToOrganizerEntity)

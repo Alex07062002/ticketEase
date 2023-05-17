@@ -17,5 +17,5 @@ data class PlaceTimeDTO(val id: Long?,
 object PlaceTimeTable : LongIdTable("placeTime") {
     val placeId = long("place_id").references(PlaceTable.id)
     val date = timestamp("date")
-    val status = enumeration("status", StatusPlaceTime::class)
+    val status = varchar("status",30)
 }
