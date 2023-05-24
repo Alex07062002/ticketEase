@@ -8,6 +8,8 @@ import com.ticketEase.backend.Auth.token.TokenConfig
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 
+const val JWT_SECRET="eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFsZXggUG9sb3poZW5jZXYiLCJpYXQiOjE1MTYyMzkwMjJ9"
+
 fun Application.configureSecurity(config : TokenConfig, resource: HoconApplicationConfig) {
     authentication {
         jwt {

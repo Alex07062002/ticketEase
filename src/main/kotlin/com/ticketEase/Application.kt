@@ -23,7 +23,7 @@ fun Application.module() {
         issuer = config.property("jwt.issuer").getString(),
         audience = config.property("jwt.audience").getString(),
         expiresIn = 365L * 1000L * 60L * 60L * 24L,
-        secret = System.getenv("JWT_SECRET")
+        secret = JWT_SECRET
 
     )
     configureSecurity(tokenConfig, config)

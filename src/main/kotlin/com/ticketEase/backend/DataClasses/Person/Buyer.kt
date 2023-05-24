@@ -8,6 +8,10 @@ data class BuyerRequest(val login: String,val password: String)
 @Serializable
 data class BuyerResponse(val token : String)
 @Serializable
+data class BuyerWithoutPswd(val name : String,val surname: String,val email: String, val mobile: String? = null, val token: String)
+@Serializable
+data class BuyerUpdateCity(val token: String, val city : Cities)
+@Serializable
 data class Buyer(val id : Long,
                  val name : String,
                  val surname : String,

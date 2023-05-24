@@ -19,6 +19,8 @@ interface EventTransaction :
 
         suspend fun selectEventByPlaceTime(placeTimeId : Long) : List<EventDTO>?
 
+        suspend fun delete(id : Long) : Boolean
+
 }
 
 

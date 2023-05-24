@@ -1,9 +1,6 @@
 package com.ticketEase.backend.Routing
 
-import com.example.DataClasses.Person.Cities
-import com.example.DataClasses.Person.Organizer
-import com.example.DataClasses.Person.OrganizerRequest
-import com.example.DataClasses.Person.OrganizerResponse
+import com.example.DataClasses.Person.*
 import com.ticketEase.backend.Auth.Hashing.Hash
 import com.ticketEase.backend.Auth.Hashing.HashServiceImpl
 import com.ticketEase.backend.Auth.token.JwtTokenService
@@ -28,11 +25,9 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
         post{
             call.respond(HttpStatusCode.OK,organizerService.selectAll())
         }
-        delete("/{id}") {
-            val idFromQuery = call.parameters["id"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid organizer id")
-            }
-            organizerService.delete(idFromQuery.toLong())
+        delete("/delete") {
+            val parameters = call.receive<OrganizerResponse>()
+            organizerService.delete(parameters.token)
             call.respond("Organizer is deleted.")
         }
         post("/create"){
@@ -45,11 +40,17 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
                 name = "userId",
                 value = parameters.id.toString()))))
         }
+        post("/token"){
+            val parameters = call.receive<OrganizerResponse>()
+            val organizer = organizerService.selectByLogin(parameters.token)
+            if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
+                call.respond(HttpStatusCode.OK,organizer)
+        }
         put("/{id}/update"){
-            val parameters = call.receive<Organizer>()
+            val parameters = call.receive<OrganizerWithoutPswd>()
             val organizer = organizerService.updateParamsOrganizer(parameters)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't updated.") else
-                call.respond(HttpStatusCode.OK,OrganizerResponse(organizer.password))
+                call.respond(HttpStatusCode.OK,OrganizerResponse(organizer.token))
         }
         put("/signIn") {
             val parameters = call.receive<OrganizerRequest>()
@@ -89,14 +90,9 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
             }
             organizerService.selectOrganizerByCity(Cities.valueOf(cityFromQuery))
         }
-        post("/{id}/{city}"){
-            val idFromQuery = call.parameters["id"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid organizer id")
-            }
-            val cityFromQuery = call.parameters["city"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid city")
-            }
-             val result = organizerService.updateCityPerson(idFromQuery.toLong(),Cities.valueOf(cityFromQuery))
+        post("/updateCity"){
+            val parameters = call.receive<OrganizerUpdateCity>()
+            val result = organizerService.updateCityPerson(parameters.token,parameters.city)
             if(result) call.respond(HttpStatusCode.OK) else call.respond(HttpStatusCode.BadRequest)
         }
         }

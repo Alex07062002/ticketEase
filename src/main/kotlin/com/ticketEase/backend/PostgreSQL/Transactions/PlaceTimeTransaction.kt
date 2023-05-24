@@ -14,4 +14,6 @@ interface PlaceTimeTransaction : CRUDOperations<PlaceTimeDTO, Long> {
     suspend fun selectIdByDate(date : Instant) : List<PlaceTimeDTO>
 
     suspend fun selectDateById(placeTimeId : Long) : Instant?
+
+    suspend fun delete(id : Long) : Boolean
 }

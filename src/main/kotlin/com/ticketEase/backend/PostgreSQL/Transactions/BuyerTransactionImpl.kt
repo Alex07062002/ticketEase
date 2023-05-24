@@ -26,9 +26,17 @@ class BuyerTransactionImpl : BuyerTransaction {
         secret = rs[buyer.secret]
     )
 
-    override suspend fun updateCityPerson(id : Long, city: Cities): Boolean = dbQuery{
-        logger.info("Buyer $id update city to $city transaction is started.")
-        buyer.update ({buyer.id eq id}){
+    private fun buyerDBToBuyerWithoutPswd(rs : ResultRow) = BuyerWithoutPswd(
+        name = rs[buyer.name],
+        surname = rs[buyer.surname],
+        email = rs[buyer.email],
+        mobile = rs[buyer.mobile],
+        token = rs[buyer.password]
+    )
+
+    override suspend fun updateCityPerson(token : String, city: Cities): Boolean = dbQuery{
+        logger.info("Buyer update city to $city transaction is started.")
+        buyer.update ({buyer.password eq token}){
             it[this.city] = city.toString()
         } > 0
     }
@@ -37,17 +45,26 @@ class BuyerTransactionImpl : BuyerTransaction {
         buyer.select(buyer.login eq login).map(::buyerDBToBuyerEntity).singleOrNull()
     }
 
-    override suspend fun updateParamsBuyer(buyerUp: Buyer): Buyer?{
+    override suspend fun checkByLogin(login: String): Boolean = dbQuery {
+        buyer.select(buyer.login eq login).count()
+    } > 0
+
+    override suspend fun selectByToken(token: String): BuyerWithoutPswd? = dbQuery {
+        buyer.slice(buyer.name,buyer.surname,buyer.email,buyer.mobile,buyer.password)
+            .select(buyer.password eq token).map(::buyerDBToBuyerWithoutPswd).singleOrNull()
+    }
+
+    override suspend fun updateParamsBuyer(buyerUp: BuyerWithoutPswd): BuyerWithoutPswd? {
         dbQuery {
             logger.info("Buyer update transaction is started.")
-            buyer.update({ buyer.id eq buyerUp.id }) {
+            buyer.update({ buyer.password eq buyerUp.token}) {
                 it[this.name] = buyerUp.name
                 it[this.surname] = buyerUp.surname
                 it[this.email] = buyerUp.email
                 it[this.mobile] = buyerUp.mobile
             }
         }
-        return selectById(buyerUp.id)
+            return selectByToken(buyerUp.token)
     }
 
     override suspend fun createBuyer(buyerCreate: Buyer): Buyer? = dbQuery {
@@ -66,18 +83,18 @@ class BuyerTransactionImpl : BuyerTransaction {
         insertStatement.resultedValues?.singleOrNull()?.let(::buyerDBToBuyerEntity)
     }
 
-
-
     override suspend fun selectAll(): List<Buyer> = dbQuery {
         logger.info("Buyer select all transaction is started.")
         buyer.selectAll().map(::buyerDBToBuyerEntity)
     }
 
-    override suspend fun delete(id: Long): Boolean = dbQuery {
-        logger.info("Buyer $id delete transaction is started.")
-        buyer.deleteWhere {buyer.id eq id}
+    override suspend fun delete(token: String): Boolean = dbQuery {
+        logger.info("Buyer  delete transaction is started.")
+        buyer.deleteWhere {buyer.password eq token}
     } > 0
 
+    @Deprecated("Change to selectByToken")
+    // Warning without security
     override suspend fun selectById(id: Long): Buyer? = dbQuery {
        buyer.select {buyer.id eq id}.map(::buyerDBToBuyerEntity).singleOrNull()
     }

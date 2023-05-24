@@ -17,4 +17,6 @@ interface TicketTransaction : CRUDOperations<TicketDTO, Long>{
     suspend fun selectByEvent(eventId : Long, status: StatusTicket) : List<TicketDTO>
 
     suspend fun filterEventByCost(lowPrice: Double, highPrice : Double) : List<Long>
+
+    suspend fun delete(id : Long) : Boolean
 }

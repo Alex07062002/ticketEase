@@ -24,12 +24,20 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         city = rs[organizer.city],
         status = StatusOrganizer.valueOf(rs[organizer.status]),
         secret = rs[organizer.secret]
-
     )
 
-    override suspend fun updateCityPerson(id : Long, city: Cities): Boolean = dbQuery {
-        logger.info("Organizer $id update city to $city transaction is started.")
-        organizer.update ({organizer.id eq id}){
+    private fun organizerDBToOrganizerWithoutPswd(rs : ResultRow) = OrganizerWithoutPswd(
+        name = rs[organizer.name],
+        surname = rs[organizer.surname],
+        token = rs[organizer.password],
+        email = rs[organizer.email],
+        mobile = rs[organizer.mobile],
+        status = StatusOrganizer.valueOf(rs[organizer.status])
+    )
+
+    override suspend fun updateCityPerson(token : String, city: Cities): Boolean = dbQuery {
+        logger.info("Organizer update city to $city transaction is started.")
+        organizer.update ({organizer.password eq token}){
             it[this.city] = city
         }
     } > 0
@@ -38,10 +46,16 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         organizer.select(organizer.login eq login).map(::organizerDBToOrganizerEntity).singleOrNull()
     }
 
-    override suspend fun updateParamsOrganizer(organizerUp: Organizer): Organizer? {
+    override suspend fun selectByToken(token: String): OrganizerWithoutPswd?  = dbQuery{
+        organizer.slice(organizer.name,organizer.surname,organizer.email,
+            organizer.mobile,organizer.status,organizer.password).select(organizer.password eq token)
+            .map(::organizerDBToOrganizerWithoutPswd).singleOrNull()
+    }
+
+    override suspend fun updateParamsOrganizer(organizerUp: OrganizerWithoutPswd): OrganizerWithoutPswd? {
         dbQuery {
-            logger.info("Organizer ${organizerUp.id} update transaction is started.")
-            organizer.update({ organizer.id eq organizerUp.id }) {
+            logger.info("Organizer update transaction is started.")
+            organizer.update({ organizer.password eq organizerUp.token }) {
                 it[this.name] = organizerUp.name
                 it[this.surname] = organizerUp.surname
                 it[this.email] = organizerUp.email
@@ -49,7 +63,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
                 it[this.status] = organizerUp.status.toString()
             }
         }
-        return selectById(organizerUp.id)
+        return selectByToken(organizerUp.token)
     }
     override suspend fun createOrganizer(organizerCreate: Organizer) : Organizer?  = dbQuery{
         logger.info("Organizer create transaction is started.")
@@ -68,7 +82,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         insertStatement.resultedValues?.singleOrNull()?.let(::organizerDBToOrganizerEntity)
     }
 
-    override suspend fun selectOrganizerByCity(city : Cities): Query = dbQuery{
+    override suspend fun selectOrganizerByCity(city : Cities): Query = dbQuery{ // TODO change this
         logger.info("Organizer select organizer id by city $city is started.")
         organizer.slice(organizer.id).select(organizer.city eq city)
     }
@@ -78,11 +92,13 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         organizer.selectAll().map(::organizerDBToOrganizerEntity)
     }
 
-    override suspend fun delete(id: Long): Boolean = dbQuery {
-        logger.info("Organizer $id delete transaction is started.")
-        organizer.deleteWhere{organizer.id eq id}
+    override suspend fun delete(token: String): Boolean = dbQuery {
+        logger.info("Organizer delete transaction is started.")
+        organizer.deleteWhere{organizer.password eq token}
     } > 0
 
+    @Deprecated("Change to selectByToken")
+    // Warning without security
     override suspend fun selectById(id: Long): Organizer?  = dbQuery{
         organizer.select {organizer.id eq id}.map(::organizerDBToOrganizerEntity).singleOrNull()
     }

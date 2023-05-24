@@ -6,7 +6,6 @@ interface CRUDOperations<T,E> {
      *  See more: "https://mfarsikov.github.io/kotgres/"
     **/
     suspend fun selectAll() : List<T>
-    suspend fun delete(id : E) : Boolean
+    //suspend fun delete(id : E) : Boolean
     suspend fun selectById(id : E) : T?
-
 }

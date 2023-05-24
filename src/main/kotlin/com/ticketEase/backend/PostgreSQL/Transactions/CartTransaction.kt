@@ -9,4 +9,7 @@ interface CartTransaction : CRUDOperations<CartDTO, Pair<Long,Long>> {
 
     suspend fun updateCart(cart : CartDTO) : CartDTO?
 
+    suspend fun delete(id : Pair<Long,Long>) : Boolean
+
+
 }

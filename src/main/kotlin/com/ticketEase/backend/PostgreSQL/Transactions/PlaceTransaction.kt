@@ -10,4 +10,6 @@ interface PlaceTransaction : CRUDOperations<PlaceDTO, Long> {
 
     suspend fun updatePlace(updatePlace : PlaceDTO) : PlaceDTO?
 
+    suspend fun delete(id : Long) : Boolean
+
 }

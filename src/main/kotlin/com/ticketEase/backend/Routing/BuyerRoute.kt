@@ -25,11 +25,9 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
         post{
             call.respond(HttpStatusCode.OK,buyerService.selectAll())
         }
-        delete("/{id}") {
-            val idFromQuery = call.parameters["id"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid organizer id")
-            }
-            buyerService.delete(idFromQuery.toLong())
+        delete("/delete") {
+            val parameters = call.receive<BuyerResponse>()
+            buyerService.delete(parameters.token)
             call.respond("Buyer is deleted.")
         }
         post("/create"){
@@ -44,14 +42,20 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                         value = parameters.id.toString())
                     )))
         }
+        post("/token"){
+            val parameters = call.receive<BuyerResponse>()
+            val buyer = buyerService.selectByLogin(parameters.token)
+            if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
+                call.respond(HttpStatusCode.OK,buyer)
+        }
         put("/{id}/update"){
-            val parameters = call.receive<Buyer>()
+            val parameters = call.receive<BuyerWithoutPswd>()
             val buyer = buyerService.updateParamsBuyer(parameters)
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't updated.") else
                 call.respond(
-                    HttpStatusCode.OK,BuyerResponse(buyer.password))
+                    HttpStatusCode.OK,buyer)
         }
-        put("/signIn") {
+        post("/signIn") {
             val parameters = call.receive<BuyerRequest>()
             val buyer = buyerService.selectByLogin(parameters.login)
             if (buyer?.secret == null) call.respond(HttpStatusCode.Conflict, "Invalid parameters.") else {
@@ -71,6 +75,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                     status = HttpStatusCode.OK,
                     message = BuyerResponse(
                         token = buyer.password
+
                     )
                 )
             }
@@ -83,14 +88,16 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             if (response == null) call.respond(HttpStatusCode.OK, "Login not found") else
                 call.respond(HttpStatusCode.Conflict, "Login is created earlier")
         }
-        post("/{id}/{city}"){
-            val idFromQuery = call.parameters["id"] ?: kotlin.run {
+        post("/{login}/check"){
+            val loginFromQuery = call.parameters["login"] ?: kotlin.run {
                 throw NotFoundException("Please provide a valid organizer id")
             }
-            val cityFromQuery = call.parameters["city"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid city")
-            }
-            val result = buyerService.updateCityPerson(idFromQuery.toLong(), Cities.valueOf(cityFromQuery))
+            val response = buyerService.checkByLogin(loginFromQuery)
+                call.respond(HttpStatusCode.OK, response)
+        }
+        post("/updateCity"){
+            val parameters = call.receive<BuyerUpdateCity>()
+            val result = buyerService.updateCityPerson(parameters.token, parameters.city)
             if(result) call.respond(HttpStatusCode.OK) else call.respond(HttpStatusCode.BadRequest)
         }
     }
