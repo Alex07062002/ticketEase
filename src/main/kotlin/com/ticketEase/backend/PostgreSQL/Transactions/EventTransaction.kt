@@ -2,7 +2,6 @@ package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Event.EventDTO
 import com.example.DataClasses.Event.GenreList
-import com.example.DataClasses.Event.StatusEvent
 import com.example.DataClasses.Event.TypeList
 import com.example.DataClasses.Person.Cities
 

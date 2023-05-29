@@ -9,7 +9,6 @@ import com.ticketEase.backend.Auth.token.TokenConfig
 import com.ticketEase.backend.PostgreSQL.Transactions.OrganizerTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -34,7 +33,14 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
             val parameters = call.receive<Organizer>()
             val organizer = organizerService.createOrganizer(parameters)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't created.") else
-                call.respond(HttpStatusCode.OK,OrganizerResponse(tokenService.generate(
+                call.respond(HttpStatusCode.OK,
+                    OrganizerWithoutPswd(
+                        name = organizer.name,
+                        surname = organizer.surname,
+                        email = organizer.email,
+                        mobile = organizer.mobile,
+                        status = organizer.status,
+                        token = tokenService.generate(
                         config = tokenConfig,
                 TokenClaim(
                 name = "userId",
@@ -42,7 +48,7 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
         }
         post("/token"){
             val parameters = call.receive<OrganizerResponse>()
-            val organizer = organizerService.selectByLogin(parameters.token)
+            val organizer = organizerService.selectByToken(parameters.token)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
                 call.respond(HttpStatusCode.OK,organizer)
         }
@@ -70,13 +76,21 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    message = OrganizerResponse(
+                    message = OrganizerWithoutPswd(
+                        name = organizer.name,
+                        surname = organizer.surname,
+                        email = organizer.email,
+                        mobile = organizer.mobile,
+                        status = organizer.status,
                         token = organizer.password
                     )
                 )
             }
         }
-        post("/{login}"){
+        /**
+         * Deprecated -> filtration isn't realized
+         */
+       /* post("/{login}"){
             val loginFromQuery = call.parameters["login"] ?: kotlin.run {
                 throw NotFoundException("Please provide a valid organizer id")
             }
@@ -89,7 +103,7 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
                 throw NotFoundException("Please provide a valid city")
             }
             organizerService.selectOrganizerByCity(Cities.valueOf(cityFromQuery))
-        }
+        }*/
         post("/updateCity"){
             val parameters = call.receive<OrganizerUpdateCity>()
             val result = organizerService.updateCityPerson(parameters.token,parameters.city)

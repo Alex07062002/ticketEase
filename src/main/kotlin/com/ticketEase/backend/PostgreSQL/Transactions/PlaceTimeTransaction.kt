@@ -1,7 +1,6 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeDTO
-import com.ticketEase.backend.DataClasses.PlaceTime.StatusPlaceTime
 import java.time.Instant
 
 interface PlaceTimeTransaction : CRUDOperations<PlaceTimeDTO, Long> {

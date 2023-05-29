@@ -6,7 +6,7 @@ interface BuyerTransaction : PersonTransaction<Buyer> {
 
     suspend fun updateParamsBuyer(buyer: BuyerWithoutPswd):BuyerWithoutPswd?
 
-    suspend fun createBuyer(buyer: Buyer) : Buyer?
+    suspend fun createBuyer(buyer: Buyer) : BuyerWithoutPswd?
 
     suspend fun selectByLogin(login : String) : Buyer?
 

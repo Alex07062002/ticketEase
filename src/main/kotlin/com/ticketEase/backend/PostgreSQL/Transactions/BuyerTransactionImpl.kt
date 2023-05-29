@@ -40,7 +40,6 @@ class BuyerTransactionImpl : BuyerTransaction {
             it[this.city] = city.toString()
         } > 0
     }
-
     override suspend fun selectByLogin(login: String): Buyer?  = dbQuery{
         buyer.select(buyer.login eq login).map(::buyerDBToBuyerEntity).singleOrNull()
     }
@@ -67,7 +66,7 @@ class BuyerTransactionImpl : BuyerTransaction {
             return selectByToken(buyerUp.token)
     }
 
-    override suspend fun createBuyer(buyerCreate: Buyer): Buyer? = dbQuery {
+    override suspend fun createBuyer(buyerCreate: Buyer): BuyerWithoutPswd? = dbQuery {
         logger.info("Buyer create transaction is started.")
         val pswdHash =  hashing.generateSaltedHash(buyerCreate.password)
         val insertStatement = buyer.insert {
@@ -80,7 +79,7 @@ class BuyerTransactionImpl : BuyerTransaction {
             it[buyer.city] = buyerCreate.city.toString()
             it[buyer.secret] = pswdHash.secret
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::buyerDBToBuyerEntity)
+        insertStatement.resultedValues?.singleOrNull()?.let(::buyerDBToBuyerWithoutPswd)
     }
 
     override suspend fun selectAll(): List<Buyer> = dbQuery {
@@ -89,7 +88,7 @@ class BuyerTransactionImpl : BuyerTransaction {
     }
 
     override suspend fun delete(token: String): Boolean = dbQuery {
-        logger.info("Buyer  delete transaction is started.")
+        logger.info("Buyer delete transaction is started.")
         buyer.deleteWhere {buyer.password eq token}
     } > 0
 

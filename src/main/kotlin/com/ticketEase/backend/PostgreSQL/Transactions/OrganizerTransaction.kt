@@ -7,7 +7,7 @@ interface OrganizerTransaction : PersonTransaction<Organizer> {
 
     suspend fun updateParamsOrganizer(organizer: OrganizerWithoutPswd):OrganizerWithoutPswd?
 
-    suspend fun createOrganizer(organizer: Organizer) : Organizer?
+    suspend fun createOrganizer(organizer: Organizer) : OrganizerWithoutPswd?
 
     suspend fun selectOrganizerByCity(city : Cities) : Query // TODO change this
 

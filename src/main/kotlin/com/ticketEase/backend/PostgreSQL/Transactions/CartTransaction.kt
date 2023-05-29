@@ -1,7 +1,6 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.CartDTO
-import java.sql.Timestamp
 
 interface CartTransaction : CRUDOperations<CartDTO, Pair<Long,Long>> {
 

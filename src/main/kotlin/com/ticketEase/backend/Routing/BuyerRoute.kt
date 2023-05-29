@@ -13,7 +13,6 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.apache.commons.codec.digest.DigestUtils
 
 @Suppress("unused")
 fun Route.buyerRoute(tokenConfig: TokenConfig){
@@ -35,7 +34,12 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             val buyer = buyerService.createBuyer(parameters)
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't created.") else
                 call.respond(
-                    HttpStatusCode.OK,BuyerResponse(tokenService.generate(
+                    HttpStatusCode.OK,BuyerWithoutPswd(
+                        name = buyer.name,
+                        surname = buyer.surname,
+                        email = buyer.email,
+                        mobile = buyer.mobile,
+                        token = tokenService.generate(
                     config = tokenConfig,
                     TokenClaim(
                         name = "userId",
@@ -44,7 +48,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
         }
         post("/token"){
             val parameters = call.receive<BuyerResponse>()
-            val buyer = buyerService.selectByLogin(parameters.token)
+            val buyer = buyerService.selectByToken(parameters.token)
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
                 call.respond(HttpStatusCode.OK,buyer)
         }
@@ -67,27 +71,32 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                     )
                 )
                 if (!isValidPassword) {
-                    println("Entered hash: ${DigestUtils.sha256Hex("${buyer.secret}${parameters.password}")}, Hashed PW: ${buyer.password}")
                     call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
                 }
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    message = BuyerResponse(
+                    message = BuyerWithoutPswd(
+                        name = buyer.name,
+                        surname = buyer.surname,
+                        email = buyer.email,
+                        mobile = buyer.mobile,
                         token = buyer.password
-
                     )
                 )
             }
         }
-        post("/{login}"){
+        /**
+         * Deprecated -> filtration isn't realized
+         */
+       /* post("/{login}"){
             val loginFromQuery = call.parameters["login"] ?: kotlin.run {
                 throw NotFoundException("Please provide a valid organizer id")
             }
             val response = buyerService.selectByLogin(loginFromQuery)
             if (response == null) call.respond(HttpStatusCode.OK, "Login not found") else
                 call.respond(HttpStatusCode.Conflict, "Login is created earlier")
-        }
+        }*/
         post("/{login}/check"){
             val loginFromQuery = call.parameters["login"] ?: kotlin.run {
                 throw NotFoundException("Please provide a valid organizer id")

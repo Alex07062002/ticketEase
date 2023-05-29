@@ -1,7 +1,6 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Favorites.FavoriteDTO
-import com.example.DataClasses.Favorites.StatusFavorite
 
 interface FavoriteTransaction : CRUDOperations<FavoriteDTO,Pair<Long,Long>> {
 
@@ -12,5 +11,4 @@ interface FavoriteTransaction : CRUDOperations<FavoriteDTO,Pair<Long,Long>> {
     suspend fun updateFavorite(favorite: FavoriteDTO) : FavoriteDTO?
 
     suspend fun delete(id : Pair<Long,Long>) : Boolean
-
 }

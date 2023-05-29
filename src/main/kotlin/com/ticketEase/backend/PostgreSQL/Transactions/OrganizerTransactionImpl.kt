@@ -65,7 +65,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         }
         return selectByToken(organizerUp.token)
     }
-    override suspend fun createOrganizer(organizerCreate: Organizer) : Organizer?  = dbQuery{
+    override suspend fun createOrganizer(organizerCreate: Organizer) : OrganizerWithoutPswd?  = dbQuery{
         logger.info("Organizer create transaction is started.")
         val pswdHash = hashing.generateSaltedHash(organizerCreate.password)
         val insertStatement = organizer.insert {
@@ -79,7 +79,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
            it[organizer.status] = organizerCreate.status.toString()
             it[organizer.secret] = pswdHash.secret
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::organizerDBToOrganizerEntity)
+        insertStatement.resultedValues?.singleOrNull()?.let(::organizerDBToOrganizerWithoutPswd)
     }
 
     override suspend fun selectOrganizerByCity(city : Cities): Query = dbQuery{ // TODO change this
