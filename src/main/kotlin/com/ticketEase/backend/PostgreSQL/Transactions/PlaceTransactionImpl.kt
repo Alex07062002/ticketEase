@@ -2,6 +2,7 @@ package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.PlaceDTO
 import com.example.DataClasses.PlaceTable
+import com.ticketEase.backend.DataClasses.Place.TypeOfPlace
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -32,10 +33,10 @@ class PlaceTransactionImpl : PlaceTransaction {
         insertStatement.resultedValues?.singleOrNull()?.let(::placeDBToPlaceEntity)
     }
 
-    override suspend fun selectOneOfTypePlace(type: String): List<PlaceDTO>
+    override suspend fun selectOneOfTypePlace(type: TypeOfPlace): List<PlaceDTO> //TODO get place 30.05.23
     = dbQuery{
         logger.info("Place select by type place transaction is started.")
-        if (type == TypeOfPlace.WITH.toString()) place.select{place.numRow neq null;place.numColumn neq null}
+        if (type == TypeOfPlace.WITH) place.select{place.numRow neq null;place.numColumn neq null}
             .map(::placeDBToPlaceEntity) else
         place.select{place.numRow eq null; place.numColumn eq null}.map(::placeDBToPlaceEntity)
     }

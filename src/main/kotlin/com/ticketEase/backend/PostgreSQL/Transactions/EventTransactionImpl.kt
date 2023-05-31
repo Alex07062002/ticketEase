@@ -51,7 +51,7 @@ class EventTransactionImpl : EventTransaction {
             .orderBy(event.genre.count()).limit(5).map{it[event.genre]}.map{GenreList.valueOf(it)}// TODO Testing
     }
 
-    override suspend fun selectEventByCity(city: Cities): List<EventDTO>  = dbQuery{
+    override suspend fun selectEventByCity(city: Cities): List<EventDTO>  = dbQuery{ // TODO change this
         logger.info("Event select by city $city transaction is started.")
         event.select(event.organizerId inSubQuery (OrganizerTransactionImpl().selectOrganizerByCity(city)))
             .orderBy(event.placeTimeId to SortOrder.ASC)

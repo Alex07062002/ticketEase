@@ -1,6 +1,8 @@
 package com.ticketEase.backend.Routing
 
 import com.example.DataClasses.PlaceDTO
+import com.example.DataClasses.PlaceId
+import com.ticketEase.backend.DataClasses.Place.TypePlace
 import com.ticketEase.backend.PostgreSQL.Transactions.PlaceTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -19,11 +21,9 @@ fun Route.placeRoute(){
         post {
             call.respond(placeService.selectAll())
         }
-        post("/{id}") {
-            val placeIdFromQuery = call.parameters["id"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid id")
-            }
-            val place = placeService.selectById(placeIdFromQuery.toLong())
+        post("/id") {
+            val parameters = call.receive<PlaceId>()
+            val place = placeService.selectById(parameters.id)
             if (place == null) call.respond(
                 HttpStatusCode.NotFound,
                 "Place isn't find."
@@ -40,20 +40,16 @@ fun Route.placeRoute(){
             }
         }
 
-        delete("/{id}") {
-            val idFromQuery = call.parameters["id"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid id")
-            }
-            placeService.delete(idFromQuery.toLong())
+        delete("/id") {
+            val parameters = call.receive<PlaceId>()
+            placeService.delete(parameters.id)
             call.respond("Place is deleted.")
         }
-        post("/select/{type}") {
-            val typeOfPlace = call.parameters["type"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid type")
-            }
-            call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(typeOfPlace))
+        post("/select/type") {
+            val parameters = call.receive<TypePlace>()
+            call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(parameters.type))
         }
-        put("/{id}/update") {
+        put("/id/update") {
             val parameters = call.receive<PlaceDTO>()
             if (parameters.id == null) {
                 call.respond(HttpStatusCode.BadRequest, "Place isn't updated")

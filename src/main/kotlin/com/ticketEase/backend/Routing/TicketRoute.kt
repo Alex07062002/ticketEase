@@ -1,7 +1,11 @@
 package com.ticketEase.backend.Routing
 
+import com.example.DataClasses.Event.EventId
+import com.example.DataClasses.Person.BuyerId
 import com.example.DataClasses.Ticket.StatusTicket
 import com.example.DataClasses.Ticket.TicketDTO
+import com.example.DataClasses.Ticket.TicketId
+import com.example.DataClasses.Ticket.TicketWithSeat
 import com.ticketEase.backend.PostgreSQL.Transactions.TicketTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -19,21 +23,17 @@ import io.ktor.server.routing.*
           post{
               call.respond(HttpStatusCode.OK,ticketService.selectAll())
           }
-          post("/{id}"){
-              val ticketId = call.parameters["id"] ?: kotlin.run{
-                  throw NotFoundException("Not found ticket with this id")
-              }
-              val ticket = ticketService.selectById(ticketId.toLong())
+          post("/id"){
+              val parameters = call.receive<TicketId>()
+              val ticket = ticketService.selectById(parameters.id)
               if (ticket == null) call.respond(
                   HttpStatusCode.NotFound,
                   "Ticket isn't find."
               ) else call.respond(HttpStatusCode.OK, ticket)
           }
-          delete("/{id}") {
-              val ticketId = call.parameters["id"] ?: kotlin.run{
-                  throw NotFoundException("Not found ticket with this id")
-              }
-              ticketService.delete(ticketId.toLong())
+          delete("/id") {
+              val parameters = call.receive<TicketId>()
+              ticketService.delete(parameters.id)
               call.respond("Ticket is deleted.")
           }
           post("/create"){
@@ -46,7 +46,7 @@ import io.ktor.server.routing.*
                       call.respond(HttpStatusCode.Created, ticket)
               }
           }
-          put("/{id}/update"){
+          put("/update"){
               val parameters = call.receive<TicketDTO>()
               if (parameters.id == null) {
                   call.respond(HttpStatusCode.BadRequest, "Ticket isn't updated.")
@@ -56,35 +56,39 @@ import io.ktor.server.routing.*
                       call.respond(HttpStatusCode.OK, ticket)
               }
           }
-          post("/{buyerId}"){
-              val buyerId = call.parameters["buyerId"] ?: kotlin.run{
-                  throw NotFoundException("Not found ticket with this buyer id")
-              }
-              val ticketList = ticketService.selectEventByBuyer(buyerId.toLong())
+          post("/buyerId"){
+              val parameters = call.receive<BuyerId>()
+              val ticketList = ticketService.selectEventByBuyer(parameters.id)
               call.respond(HttpStatusCode.OK, ticketList)
           }
-          post("/{eventId}"){
-              val eventId = call.parameters["eventId"] ?: kotlin.run{
-                  throw NotFoundException("Not found ticket with this event id")
-              }
-              val ticket = ticketService.selectTicket(eventId.toLong(),null,null)
+          post("/eventId"){
+              val parameters = call.receive<EventId>()
+              val ticket = ticketService.selectTicket(parameters.id,null,null)
               if (ticket == null) call.respond(HttpStatusCode.NotFound, "Ticket isn't found.") else
                   call.respond(HttpStatusCode.OK,ticket)
           }
-          post("/{eventId}/{row}/{column}"){
-              val eventId = call.parameters["eventId"] ?: kotlin.run{
-                  throw NotFoundException("Not found ticket with this event id")
-              }
-              val row = call.parameters["row"] ?: kotlin.run{
-                  throw NotFoundException("Not found ticket with row")
-              }
-              val column = call.parameters["column"] ?: kotlin.run{
-                  throw NotFoundException("Not found ticket with this column")
-              }
-              val ticket = ticketService.selectTicket(eventId.toLong(),row.toInt(),column.toInt())
+          post("/eventId/row/column"){
+              val parameters = call.receive<TicketWithSeat>()
+              val ticket = ticketService.selectTicket(parameters.id,parameters.row,parameters.column)
               if (ticket == null) call.respond(HttpStatusCode.NotFound, "Ticket isn't found.") else
                   call.respond(HttpStatusCode.OK,ticket)
           }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           post("/{eventId}/{status}/search"){
               val eventId = call.parameters["eventId"] ?: kotlin.run{
                   throw NotFoundException("Not found ticket with this event id")

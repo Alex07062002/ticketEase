@@ -14,6 +14,12 @@ data class TicketDTO(val id : Long?,
                      val status : StatusTicket = StatusTicket.SALE,
                      val price : Double)
 
+@Serializable
+data class TicketId(val id : Long)
+
+@Serializable
+data class TicketWithSeat(val id : Long, val row : Int, val column : Int)
+
 object TicketTable : LongIdTable("ticket"){
     val eventId = long("event_id").references(EventTable.id)
     val buyerId = long("buyer_id").references(BuyerTable.id).nullable()

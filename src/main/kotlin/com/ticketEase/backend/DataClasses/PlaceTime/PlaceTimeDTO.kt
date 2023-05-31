@@ -14,6 +14,15 @@ data class PlaceTimeDTO(val id: Long?,
                         val date : Instant,
                         val status : StatusPlaceTime)
 
+@Serializable
+data class PlaceTimeId(val id : Long)
+
+@Serializable
+data class PlaceTimeDate(
+    @Serializable(with = DateSerializer::class)
+    val date : Instant
+)
+
 object PlaceTimeTable : LongIdTable("placeTime") {
     val placeId = long("place_id").references(PlaceTable.id)
     val date = timestamp("date")

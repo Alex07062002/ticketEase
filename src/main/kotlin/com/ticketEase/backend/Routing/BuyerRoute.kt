@@ -52,7 +52,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
                 call.respond(HttpStatusCode.OK,buyer)
         }
-        put("/{id}/update"){
+        put("/id/update"){
             val parameters = call.receive<BuyerWithoutPswd>()
             val buyer = buyerService.updateParamsBuyer(parameters)
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't updated.") else

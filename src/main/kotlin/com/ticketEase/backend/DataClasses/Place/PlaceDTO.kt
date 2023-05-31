@@ -12,6 +12,9 @@ data class PlaceDTO(
     val numColumn: Int?
 )
 
+@Serializable
+data class PlaceId(val id : Long)
+
 object PlaceTable : LongIdTable("place"){
     val name = varchar("name", 50)
     val capacity = long("capacity")

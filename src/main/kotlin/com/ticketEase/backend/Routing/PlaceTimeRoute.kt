@@ -1,6 +1,9 @@
 package com.ticketEase.backend.Routing
 
+import com.example.DataClasses.PlaceId
 import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeDTO
+import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeDate
+import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeId
 import com.ticketEase.backend.PostgreSQL.Transactions.` Adapters`.DateAdapter
 import com.ticketEase.backend.PostgreSQL.Transactions.PlaceTimeTransactionImpl
 import io.ktor.http.*
@@ -19,41 +22,31 @@ fun Route.placeTimeRoute(){
             post {
                 call.respond(HttpStatusCode.OK, placeTimeService.selectAll())
             }
-            post("/{id}") { // TODO Exception
-                val placeTimeIdFromQuery = call.parameters["id"] ?: kotlin.run {
-                    throw NotFoundException("Please provide a valid id")
-                }
-                val placeTime = placeTimeService.selectById(placeTimeIdFromQuery.toLong())
+            post("/id") {
+                val parameters = call.receive<PlaceTimeId>()
+                val placeTime = placeTimeService.selectById(parameters.id)
                 if (placeTime == null) call.respond(
                     HttpStatusCode.NotFound,
                     "PlaceTime not find"
                 ) else call.respond(HttpStatusCode.OK, placeTime)
             }
-            delete("/{id}") {
-                val bookIdFromQuery = call.parameters["id"] ?: kotlin.run {
-                    throw NotFoundException("Please provide a valid id")
-                }
-                placeTimeService.delete(bookIdFromQuery.toLong())
+            delete("/id") {
+                val parameters = call.receive<PlaceTimeId>()
+                placeTimeService.delete(parameters.id)
                 call.respond("PlaceTime is deleted.")
             }
             route("/select") {
-                post("/{date}") {//TODO Fix method {date}
-                    val dateIdFromQuery = call.parameters["date"] ?: kotlin.run {
-                        throw NotFoundException("Please provide a valid date")
-                    }
-                    placeTimeService.selectIdByDate(DateAdapter.stringToInstant(dateIdFromQuery))
+                post("/date") {//TODO Fix method {date}
+                    val parameters = call.receive<PlaceTimeDate>()
+                    placeTimeService.selectIdByDate(parameters.date)
                 }
-                post("/{id}") {
-                    val idFromQuery = call.parameters["id"] ?: kotlin.run {
-                        throw NotFoundException("Please provide a valid id")
-                    }
-                    placeTimeService.selectDateById(idFromQuery.toLong())
+                post("/id/date") {
+                    val parameters = call.receive<PlaceTimeId>()
+                    placeTimeService.selectDateById(parameters.id)
                 }
-                post("/{placeId}") {
-                    val placeIdFromQuery = call.parameters["placeId"] ?: kotlin.run {
-                        throw NotFoundException("Please provide a valid id")
-                    }
-                    placeTimeService.selectByPlace(placeIdFromQuery.toLong())
+                post("/placeId") {
+                    val parameters = call.receive<PlaceId>()
+                    placeTimeService.selectByPlace(parameters.id)
                 }
                 put("/update") {
                     val parameters = call.receive<PlaceTimeDTO>()

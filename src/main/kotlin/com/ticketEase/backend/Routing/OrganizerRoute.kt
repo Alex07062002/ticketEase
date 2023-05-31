@@ -52,7 +52,7 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
                 call.respond(HttpStatusCode.OK,organizer)
         }
-        put("/{id}/update"){
+        put("/id/update"){
             val parameters = call.receive<OrganizerWithoutPswd>()
             val organizer = organizerService.updateParamsOrganizer(parameters)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't updated.") else

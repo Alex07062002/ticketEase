@@ -22,6 +22,9 @@ data class Buyer(val id : Long,
                  val city : Cities,
                  val secret : String? = null)
 
+@Serializable
+data class BuyerId(val id : Long)
+
 object BuyerTable : LongIdTable("buyer"){
     val name = varchar("name", 25)
     val surname = varchar("surname", 50)

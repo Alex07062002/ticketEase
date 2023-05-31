@@ -1,4 +1,6 @@
-package com.ticketEase.backend.PostgreSQL.Transactions
+package com.ticketEase.backend.DataClasses.Place
+
+import kotlinx.serialization.Serializable
 
 enum class TypeOfPlace {
     WITH,
@@ -12,6 +14,9 @@ enum class TypeOfPlace {
         }
     }
 }
+
+@Serializable
+data class TypePlace(val type: TypeOfPlace)
 
 
 
