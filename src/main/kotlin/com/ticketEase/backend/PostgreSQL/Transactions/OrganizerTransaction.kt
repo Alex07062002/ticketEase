@@ -1,7 +1,6 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Person.*
-import org.jetbrains.exposed.sql.Query
 
 interface OrganizerTransaction : PersonTransaction<Organizer> {
 
