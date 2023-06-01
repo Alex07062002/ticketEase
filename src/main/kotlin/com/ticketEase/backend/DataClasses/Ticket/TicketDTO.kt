@@ -1,6 +1,5 @@
 package com.example.DataClasses.Ticket
 
-import com.example.DataClasses.CartTable.nullable
 import com.example.DataClasses.Event.EventTable
 import com.example.DataClasses.Person.BuyerTable
 import com.ticketEase.backend.DataClasses.DateSerializer

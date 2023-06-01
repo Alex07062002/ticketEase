@@ -12,7 +12,6 @@ fun Application.configureRouting(tokenConfig : TokenConfig) {
             call.respondText("Hello World!")
         }
         placeRoute()
-        cartRoute()
         eventRoute()
         favoriteRoute()
         placeTimeRoute()
