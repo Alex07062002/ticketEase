@@ -31,7 +31,7 @@ object OrganizerTable : LongIdTable("organizer"){
     val password = varchar("password", 75)
     val email = varchar("email",40)
     val mobile = varchar("mobile", 20).nullable()
-    val city = enumeration("city",Cities::class)
+    val city = varchar("city",50)
     val status = varchar("status", 30)
     val secret = varchar("secret", 75)
 }

@@ -52,22 +52,11 @@ fun Route.eventRoute(){
                 parameters.type)
             call.respond(HttpStatusCode.OK,eventList)
         }
-        post("/buyerId"){
-            val parameters = call.receive<BuyerId>()
-            val eventList = eventService.selectGenreForPreferences(parameters.id)
-            if (eventList.isNotEmpty()) call.respond(HttpStatusCode.OK,eventList) else
-                call.respond(HttpStatusCode.BadRequest, "Buyer isn't found")
-        }
         post("/placeTimeId"){
             val parameters = call.receive<PlaceTimeId>()
             val eventList = eventService.selectEventByPlaceTime(parameters.id)
             if (eventList.isNotEmpty()) call.respond(HttpStatusCode.OK,eventList) else
                 call.respond(HttpStatusCode.BadRequest, "PlaceTime isn't found")
-        }
-        post("/city"){
-            val parameters = call.receive<City>()
-            val eventList = eventService.selectEventByCity(parameters.city)
-            call.respond(HttpStatusCode.OK,eventList)
         }
     }
 }

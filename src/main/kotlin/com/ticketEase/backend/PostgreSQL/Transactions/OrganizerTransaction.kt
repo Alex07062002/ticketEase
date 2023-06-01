@@ -9,7 +9,7 @@ interface OrganizerTransaction : PersonTransaction<Organizer> {
 
     suspend fun createOrganizer(organizer: Organizer) : OrganizerWithoutPswd?
 
-    suspend fun selectOrganizerByCity(city : Cities) : Query // TODO change this
+    suspend fun selectOrganizerByCity(city : Cities) : List<Long>
 
     suspend fun selectByLogin(login : String) : Organizer?
 

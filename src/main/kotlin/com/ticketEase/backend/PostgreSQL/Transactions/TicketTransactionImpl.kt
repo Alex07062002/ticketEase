@@ -21,12 +21,13 @@ class TicketTransactionImpl : TicketTransaction {
         row = rs[ticket.row],
         column = rs[ticket.column],
         status = StatusTicket.valueOf(rs[ticket.status]),
-        price = rs[ticket.price]
+        price = rs[ticket.price],
+        orderDate = rs[ticket.orderDate]
     )
 
-    override suspend fun selectEventByBuyer(buyerId: Long): Query = dbQuery{
+    override suspend fun selectEventByBuyer(buyerId: Long): List<Long> = dbQuery{
         logger.info("Ticket select event by buyer id $buyerId transaction is started")
-        ticket.slice(ticket.eventId).select{ticket.buyerId eq buyerId}
+        ticket.slice(ticket.eventId).select{ticket.buyerId eq buyerId}.map { it[ticket.eventId] }
     }
 
     override suspend fun selectTicket(eventId: Long, row: Int?, column: Int?): TicketDTO? = dbQuery{
@@ -40,6 +41,7 @@ class TicketTransactionImpl : TicketTransaction {
                 ticket.update({ ticket.id eq ticketDTO.id }) {
                     it[this.status] = ticketDTO.status.toString()
                     it[this.buyerId] = ticketDTO.buyerId
+                    it[this.orderDate] = ticketDTO.orderDate
                 }
         }
         return ticketDTO.id?.let { selectById(it) }

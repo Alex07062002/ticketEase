@@ -12,9 +12,7 @@ interface EventTransaction :
 
         suspend fun selectEventByGenreOrType(genre : GenreList, type : TypeList):List<EventDTO> //TODO Bridge: eventId from placeTime by date and from ticket by cost
 
-        suspend fun selectGenreForPreferences(buyerId : Long) : List<GenreList> //TODO Select genre from (table 4.1) order by count(genre) limit 5
-
-        suspend fun selectEventByCity(city : Cities) : List<EventDTO>?
+        suspend fun selectGenreForPreferences(listEventId : List<Long>) : List<String> //TODO Select genre from (table 4.1) order by count(genre) limit 5
 
         suspend fun selectEventByPlaceTime(placeTimeId : Long) : List<EventDTO>?
 

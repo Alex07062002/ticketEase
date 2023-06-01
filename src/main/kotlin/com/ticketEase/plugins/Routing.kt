@@ -17,6 +17,7 @@ fun Application.configureRouting(tokenConfig : TokenConfig) {
         favoriteRoute()
         placeTimeRoute()
         ticketRoute()
+        roomsRoute()
         buyerRoute(tokenConfig)
         organizerRoute(tokenConfig)
     }

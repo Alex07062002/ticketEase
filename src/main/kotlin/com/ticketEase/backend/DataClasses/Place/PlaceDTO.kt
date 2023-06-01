@@ -9,7 +9,8 @@ data class PlaceDTO(
     val name : String,
     val capacity: Long,
     val numRow: Int?,
-    val numColumn: Int?
+    val numColumn: Int?,
+    val location : String
 )
 
 @Serializable
@@ -20,5 +21,6 @@ object PlaceTable : LongIdTable("place"){
     val capacity = long("capacity")
     val numRow = integer("numRow").nullable()
     val numColumn = integer("numColumn").nullable()
+    val location = varchar("location", 150)
 }
 

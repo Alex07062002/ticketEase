@@ -105,7 +105,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                 call.respond(HttpStatusCode.OK, response)
         }
         post("/updateCity"){
-            val parameters = call.receive<BuyerUpdateCity>()
+            val parameters = call.receive<BuyerCity>()
             val result = buyerService.updateCityPerson(parameters.token, parameters.city)
             if(result) call.respond(HttpStatusCode.OK) else call.respond(HttpStatusCode.BadRequest)
         }

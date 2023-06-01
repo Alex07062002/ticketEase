@@ -45,17 +45,10 @@ class EventTransactionImpl : EventTransaction {
         event.select{event.genre eq genre.toString();event.type eq type.toString()}.map(::eventDBToEventEntity)
     }
 
-    override suspend fun selectGenreForPreferences(buyerId : Long): List<GenreList>  = dbQuery{
+    override suspend fun selectGenreForPreferences(listEventId : List<Long>): List<String>  = dbQuery{
         logger.info("Event select genre transaction is started.")
-        event.slice(event.genre).select{event.id inSubQuery (TicketTransactionImpl().selectEventByBuyer(buyerId))}
-            .orderBy(event.genre.count()).limit(5).map{it[event.genre]}.map{GenreList.valueOf(it)}// TODO Testing
-    }
-
-    override suspend fun selectEventByCity(city: Cities): List<EventDTO>  = dbQuery{ // TODO change this
-        logger.info("Event select by city $city transaction is started.")
-        event.select(event.organizerId inSubQuery (OrganizerTransactionImpl().selectOrganizerByCity(city)))
-            .orderBy(event.placeTimeId to SortOrder.ASC)
-            .map(::eventDBToEventEntity)
+        event.slice(event.genre).select{event.id inList listEventId}
+            .orderBy(event.genre.count()).limit(5).map{it[event.genre]}.map{it}
     }
 
     override suspend fun selectEventByPlaceTime(placeTimeId: Long): List<EventDTO>  = dbQuery{

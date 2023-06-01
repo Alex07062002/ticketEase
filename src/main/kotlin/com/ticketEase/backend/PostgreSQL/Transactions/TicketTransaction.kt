@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Query
 
 interface TicketTransaction : CRUDOperations<TicketDTO, Long>{
 
-    suspend fun selectEventByBuyer(buyerId : Long) : Query
+    suspend fun selectEventByBuyer(buyerId : Long) : List<Long>
 
     suspend fun selectTicket(eventId : Long, row : Int?, column : Int?) : TicketDTO?
 

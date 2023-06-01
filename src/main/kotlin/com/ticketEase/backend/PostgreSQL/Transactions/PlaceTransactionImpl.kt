@@ -19,7 +19,8 @@ class PlaceTransactionImpl : PlaceTransaction {
         name = rs[place.name],
         capacity = rs[place.capacity],
         numRow = rs[place.numRow],
-        numColumn = rs[place.numColumn]
+        numColumn = rs[place.numColumn],
+        location = rs[place.location]
     )
 
     override suspend fun createPlace(placeAdd : PlaceDTO) : PlaceDTO? = dbQuery{
@@ -29,6 +30,7 @@ class PlaceTransactionImpl : PlaceTransaction {
             it[place.capacity] = placeAdd.capacity
             it[place.numRow] = placeAdd.numRow
             it[place.numColumn] = placeAdd.numColumn
+            it[place.location] = placeAdd.location
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::placeDBToPlaceEntity)
     }
@@ -49,6 +51,7 @@ class PlaceTransactionImpl : PlaceTransaction {
                 it[this.capacity] = placeUp.capacity
                 it[this.numRow] = placeUp.numRow
                 it[this.numColumn] = placeUp.numColumn
+                it[this.location] = placeUp.location
             }
         }
        return placeUp.id?.let {selectById(it)}

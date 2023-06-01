@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 class OrganizerTransactionImpl : OrganizerTransaction {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val organizer = OrganizerTable
+    val organizer = OrganizerTable
     private val hashing = HashServiceImpl()
 
     private fun organizerDBToOrganizerEntity(rs : ResultRow) = Organizer(
@@ -21,7 +21,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
         password = rs[organizer.password],
         email = rs[organizer.email],
         mobile = rs[organizer.mobile],
-        city = rs[organizer.city],
+        city = Cities.valueOf(rs[organizer.city]),
         status = StatusOrganizer.valueOf(rs[organizer.status]),
         secret = rs[organizer.secret]
     )
@@ -38,7 +38,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     override suspend fun updateCityPerson(token : String, city: Cities): Boolean = dbQuery {
         logger.info("Organizer update city to $city transaction is started.")
         organizer.update ({organizer.password eq token}){
-            it[this.city] = city
+            it[this.city] = city.toString()
         }
     } > 0
 
@@ -75,16 +75,16 @@ class OrganizerTransactionImpl : OrganizerTransaction {
            it[organizer.password] = pswdHash.hash
            it[organizer.email] = organizerCreate.email
            it[organizer.mobile] = organizerCreate.mobile
-            it[organizer.city] = organizerCreate.city
+            it[organizer.city] = organizerCreate.city.toString()
            it[organizer.status] = organizerCreate.status.toString()
             it[organizer.secret] = pswdHash.secret
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::organizerDBToOrganizerWithoutPswd)
     }
 
-    override suspend fun selectOrganizerByCity(city : Cities): Query = dbQuery{ // TODO change this
+    override suspend fun selectOrganizerByCity(city : Cities): List<Long> = dbQuery{
         logger.info("Organizer select organizer id by city $city is started.")
-        organizer.slice(organizer.id).select(organizer.city eq city)
+        organizer.slice(organizer.id).select(organizer.city eq city.toString()).map{it[organizer.id].value}
     }
 
     override suspend fun selectAll(): List<Organizer>  = dbQuery{

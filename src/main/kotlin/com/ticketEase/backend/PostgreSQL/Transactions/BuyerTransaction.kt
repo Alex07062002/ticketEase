@@ -14,4 +14,6 @@ interface BuyerTransaction : PersonTransaction<Buyer> {
 
     suspend fun selectByToken(token : String) : BuyerWithoutPswd?
 
+    suspend fun selectIdByToken(token: String) : Long
+
 }

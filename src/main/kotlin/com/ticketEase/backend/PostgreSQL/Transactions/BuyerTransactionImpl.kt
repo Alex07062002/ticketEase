@@ -53,6 +53,10 @@ class BuyerTransactionImpl : BuyerTransaction {
             .select(buyer.password eq token).map(::buyerDBToBuyerWithoutPswd).singleOrNull()
     }
 
+    override suspend fun selectIdByToken(token: String): Long = dbQuery {
+        buyer.slice(buyer.id).select(buyer.password eq token).map {it[buyer.id].value}.single()
+    }
+
     override suspend fun updateParamsBuyer(buyerUp: BuyerWithoutPswd): BuyerWithoutPswd? {
         dbQuery {
             logger.info("Buyer update transaction is started.")
