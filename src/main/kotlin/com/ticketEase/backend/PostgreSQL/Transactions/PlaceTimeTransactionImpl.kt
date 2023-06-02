@@ -68,7 +68,7 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
         placeTime.deleteWhere{placeTime.id eq id}
     } > 0
 
-    override suspend fun selectById(id: Long): PlaceTimeDTO?  = dbQuery{ //TODO get placeTime 30.05.23
+    override suspend fun selectById(id: Long): PlaceTimeDTO?  = dbQuery{
         logger.info("PlaceTime $id select by id transaction is started.")
         placeTime.select(placeTime.id eq id).map(::placeTimeDBToPlaceTimeEntity).singleOrNull()
     }

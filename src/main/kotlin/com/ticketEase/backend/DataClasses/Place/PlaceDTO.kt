@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 @Serializable
 data class PlaceDTO(
-    val id : Long?,
+    val id : Long? = null,
     val name : String,
     val capacity: Long,
     val numRow: Int?,

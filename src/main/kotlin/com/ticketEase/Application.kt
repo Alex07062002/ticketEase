@@ -11,6 +11,7 @@ import io.ktor.server.config.*
 
 val config = HoconApplicationConfig(ConfigFactory.load())
 
+// total 1971 rows code
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)

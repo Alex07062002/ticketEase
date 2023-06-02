@@ -36,7 +36,7 @@ fun Route.placeTimeRoute(){
                 call.respond("PlaceTime is deleted.")
             }
             route("/select") {
-                post("/date") {//TODO Fix method {date}
+                post("/date") {
                     val parameters = call.receive<PlaceTimeDate>()
                     placeTimeService.selectIdByDate(parameters.date)
                 }
@@ -48,6 +48,7 @@ fun Route.placeTimeRoute(){
                     val parameters = call.receive<PlaceId>()
                     placeTimeService.selectByPlace(parameters.id)
                 }
+            }
                 put("/update") {
                     val parameters = call.receive<PlaceTimeDTO>()
                     if (parameters.id == null) call.respond(HttpStatusCode.BadRequest, "Invalid data") else {
@@ -56,7 +57,6 @@ fun Route.placeTimeRoute(){
                             call.respond(HttpStatusCode.OK, placeTime)
                     }
                 }
-            }
             post("/create") {
                 val parameters = call.receive<PlaceTimeDTO>()
                 if (parameters.id != null) call.respond(HttpStatusCode.BadRequest, "Invalid data") else {

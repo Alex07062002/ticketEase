@@ -6,6 +6,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.time.Instant
 
+@Deprecated("Change to JavaTimeModule serialization")
 @Serializer(forClass = Instant::class)
 @OptIn(ExperimentalSerializationApi::class)
 object DateSerializer : KSerializer<Instant> {

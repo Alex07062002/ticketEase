@@ -35,6 +35,7 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't created.") else
                 call.respond(HttpStatusCode.OK,
                     OrganizerWithoutPswd(
+                        id = organizer.id,
                         name = organizer.name,
                         surname = organizer.surname,
                         email = organizer.email,
@@ -52,7 +53,7 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
                 call.respond(HttpStatusCode.OK,organizer)
         }
-        put("/id/update"){
+        put("/update"){
             val parameters = call.receive<OrganizerWithoutPswd>()
             val organizer = organizerService.updateParamsOrganizer(parameters)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't updated.") else
@@ -77,6 +78,7 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
                 call.respond(
                     status = HttpStatusCode.OK,
                     message = OrganizerWithoutPswd(
+                        id = organizer.id,
                         name = organizer.name,
                         surname = organizer.surname,
                         email = organizer.email,
@@ -86,6 +88,11 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
                     )
                 )
             }
+        }
+        post("/updateCity"){
+            val parameters = call.receive<OrganizerUpdateCity>()
+            val result = organizerService.updateCityPerson(parameters.token,parameters.city)
+            if(result) call.respond(HttpStatusCode.OK) else call.respond(HttpStatusCode.BadRequest)
         }
         /**
          * Deprecated -> filtration isn't realized
@@ -104,10 +111,5 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
             }
             organizerService.selectOrganizerByCity(Cities.valueOf(cityFromQuery))
         }*/
-        post("/updateCity"){
-            val parameters = call.receive<OrganizerUpdateCity>()
-            val result = organizerService.updateCityPerson(parameters.token,parameters.city)
-            if(result) call.respond(HttpStatusCode.OK) else call.respond(HttpStatusCode.BadRequest)
-        }
         }
     }

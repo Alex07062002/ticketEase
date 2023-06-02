@@ -1,6 +1,7 @@
 package com.ticketEase.backend.DataClasses.PlaceTime
 
 import com.example.DataClasses.PlaceTable
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer
 import com.ticketEase.backend.DataClasses.DateSerializer
 import kotlinx.serialization.Serializable
@@ -8,19 +9,14 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
-@Serializable
-data class PlaceTimeDTO(val id: Long?,
+data class PlaceTimeDTO(val id: Long? = null,
                         val placeId : Long,
-                        @Serializable(with = DateSerializer::class)
                         val date : Instant,
                         val status : StatusPlaceTime)
 
-@Serializable
 data class PlaceTimeId(val id : Long)
 
-@Serializable
 data class PlaceTimeDate(
-    @Serializable(with = DateSerializer::class)
     val date : Instant
 )
 

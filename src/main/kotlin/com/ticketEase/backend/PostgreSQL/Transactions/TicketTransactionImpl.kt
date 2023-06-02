@@ -48,7 +48,7 @@ class TicketTransactionImpl : TicketTransaction {
     }
 
 
-    override suspend fun createTicket(ticketDTO: TicketDTO): TicketDTO? = dbQuery{
+    override suspend fun createTicket(ticketDTO: TicketDTO) = dbQuery{
         logger.info("Ticket create transaction is started.")
         val insertStatement = ticket.insert {
             it[this.eventId] = ticketDTO.eventId
@@ -57,7 +57,6 @@ class TicketTransactionImpl : TicketTransaction {
             it[this.column] = ticketDTO.column
             it[this.price] = ticketDTO.price
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::ticketDBToTicketEntity)
     }
 
     override suspend fun selectByEvent(eventId: Long,status: StatusTicket): List<TicketDTO>  = dbQuery{
@@ -80,6 +79,10 @@ class TicketTransactionImpl : TicketTransaction {
         logger.info("Ticket $id delete transaction is started.")
         ticket.deleteWhere {ticket.id eq id}
     } > 0
+
+    override suspend fun countSoldTicket(eventId: Long, status: StatusTicket): Long = dbQuery {
+        ticket.select{ticket.eventId eq eventId;ticket.status eq status.toString()}.count()
+    }
 
     override suspend fun selectById(id: Long): TicketDTO? = dbQuery {
         logger.info("Ticket $id select by id transaction is started.")

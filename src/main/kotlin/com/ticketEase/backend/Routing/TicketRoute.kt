@@ -36,16 +36,6 @@ import io.ktor.server.routing.*
               ticketService.delete(parameters.id)
               call.respond("Ticket is deleted.")
           }
-          post("/create"){
-              val parameters = call.receive<TicketDTO>()
-              if (parameters.id != null) {
-                  call.respond(HttpStatusCode.BadRequest, "Ticket isn't created.")
-              } else {
-                  val ticket = ticketService.createTicket(parameters)
-                  if (ticket == null) call.respond(HttpStatusCode.BadRequest, "Ticket isn't created") else
-                      call.respond(HttpStatusCode.Created, ticket)
-              }
-          }
           put("/update"){
               val parameters = call.receive<TicketDTO>()
               if (parameters.id == null) {
@@ -73,23 +63,20 @@ import io.ktor.server.routing.*
               if (ticket == null) call.respond(HttpStatusCode.NotFound, "Ticket isn't found.") else
                   call.respond(HttpStatusCode.OK,ticket)
           }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          post("/{eventId}/{status}/search"){
+          post("/eventId/list"){
+              val parameters = call.receive<EventId>()
+              val ticketList = ticketService.selectByEvent(parameters.id, StatusTicket.SOLD)
+                  call.respond(HttpStatusCode.OK,ticketList)
+          }
+          post("/eventId/soldTicket"){
+              val parameters = call.receive<EventId>()
+              val countSoldTicket = ticketService.countSoldTicket(parameters.id, StatusTicket.SOLD)
+              call.respond(HttpStatusCode.OK,countSoldTicket)
+          }
+          /**
+           * Filtration isn't realization
+           */
+         /* post("/{eventId}/{status}/search"){
               val eventId = call.parameters["eventId"] ?: kotlin.run{
                   throw NotFoundException("Not found ticket with this event id")
               }
@@ -109,5 +96,6 @@ import io.ktor.server.routing.*
               }
               val eventIdList = ticketService.filterEventByCost(lowCost.toDouble(),highCost.toDouble())
               call.respond(HttpStatusCode.OK,eventIdList)
+              }*/
           }
       }

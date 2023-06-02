@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 @Serializable
-data class EventDTO(val id : Long?,
+data class EventDTO(val id : Long? = null,
                     val placeTimeId : Long,
                     val organizerId : Long,
                     val name : String,
                     val genre : GenreList,
                     val type : TypeList,
-                    val status : StatusEvent = StatusEvent.CREATE,
+                    val status : StatusEvent = StatusEvent.CREATED,
                     val nameGroup : String? = null,
                     val description : String? = null)
 

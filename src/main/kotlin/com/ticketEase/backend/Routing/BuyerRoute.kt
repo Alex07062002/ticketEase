@@ -35,6 +35,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't created.") else
                 call.respond(
                     HttpStatusCode.OK,BuyerWithoutPswd(
+                        id = buyer.id,
                         name = buyer.name,
                         surname = buyer.surname,
                         email = buyer.email,
@@ -52,7 +53,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
                 call.respond(HttpStatusCode.OK,buyer)
         }
-        put("/id/update"){
+        put("/update"){
             val parameters = call.receive<BuyerWithoutPswd>()
             val buyer = buyerService.updateParamsBuyer(parameters)
             if (buyer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't updated.") else
@@ -77,6 +78,7 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                 call.respond(
                     status = HttpStatusCode.OK,
                     message = BuyerWithoutPswd(
+                        id = buyer.id,
                         name = buyer.name,
                         surname = buyer.surname,
                         email = buyer.email,
@@ -97,11 +99,9 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
             if (response == null) call.respond(HttpStatusCode.OK, "Login not found") else
                 call.respond(HttpStatusCode.Conflict, "Login is created earlier")
         }*/
-        post("/{login}/check"){
-            val loginFromQuery = call.parameters["login"] ?: kotlin.run {
-                throw NotFoundException("Please provide a valid organizer id")
-            }
-            val response = buyerService.checkByLogin(loginFromQuery)
+        post("/login/check"){
+            val parameters = call.receive<BuyerLogin>()
+            val response = buyerService.checkByLogin(parameters.login)
                 call.respond(HttpStatusCode.OK, response)
         }
         post("/updateCity"){

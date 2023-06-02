@@ -27,6 +27,7 @@ class BuyerTransactionImpl : BuyerTransaction {
     )
 
     private fun buyerDBToBuyerWithoutPswd(rs : ResultRow) = BuyerWithoutPswd(
+        id = rs[buyer.id].value,
         name = rs[buyer.name],
         surname = rs[buyer.surname],
         email = rs[buyer.email],
@@ -49,7 +50,7 @@ class BuyerTransactionImpl : BuyerTransaction {
     } > 0
 
     override suspend fun selectByToken(token: String): BuyerWithoutPswd? = dbQuery {
-        buyer.slice(buyer.name,buyer.surname,buyer.email,buyer.mobile,buyer.password)
+        buyer.slice(buyer.id,buyer.name,buyer.surname,buyer.email,buyer.mobile,buyer.password)
             .select(buyer.password eq token).map(::buyerDBToBuyerWithoutPswd).singleOrNull()
     }
 

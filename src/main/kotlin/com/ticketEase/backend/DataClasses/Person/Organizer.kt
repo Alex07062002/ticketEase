@@ -7,7 +7,7 @@ data class OrganizerRequest(val login: String,val password: String)
 @Serializable
 data class OrganizerResponse(val token : String)
 @Serializable
-data class OrganizerWithoutPswd(val name : String, val surname: String, val email: String,
+data class OrganizerWithoutPswd(val id : Long, val name : String, val surname: String, val email: String,
                                 val mobile: String? = null, val status: StatusOrganizer, val token: String)
 @Serializable
 data class OrganizerUpdateCity(val token: String, val city : Cities)

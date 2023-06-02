@@ -35,7 +35,7 @@ class PlaceTransactionImpl : PlaceTransaction {
         insertStatement.resultedValues?.singleOrNull()?.let(::placeDBToPlaceEntity)
     }
 
-    override suspend fun selectOneOfTypePlace(type: TypeOfPlace): List<PlaceDTO> //TODO get place 30.05.23
+    override suspend fun selectOneOfTypePlace(type: TypeOfPlace): List<PlaceDTO>
     = dbQuery{
         logger.info("Place select by type place transaction is started.")
         if (type == TypeOfPlace.WITH) place.select{place.numRow neq null;place.numColumn neq null}
@@ -66,6 +66,10 @@ class PlaceTransactionImpl : PlaceTransaction {
         logger.info("Place $id delete transaction is started.")
         place.deleteWhere{place.id eq id}
     } > 0
+
+    override suspend fun capacity(id: Long): Long  = dbQuery{
+        place.slice(place.capacity).select(place.id eq id).map {it[place.capacity]}.single()
+    }
 
     override suspend fun selectById(id: Long): PlaceDTO? = dbQuery {
         logger.info("Place $id select by id transaction is started.")

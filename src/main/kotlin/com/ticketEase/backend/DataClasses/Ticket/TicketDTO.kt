@@ -8,15 +8,14 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
-@Serializable
-data class TicketDTO(val id : Long?,
+
+data class TicketDTO(val id : Long? = null,
                      val eventId : Long,
                      val buyerId : Long? = null,
                      val row : Int? = null,
                      val column : Int? = null,
                      val status : StatusTicket = StatusTicket.SALE,
                      val price : Double,
-                     @Serializable(with = DateSerializer::class)
                      val orderDate : Instant? = null)
 
 @Serializable

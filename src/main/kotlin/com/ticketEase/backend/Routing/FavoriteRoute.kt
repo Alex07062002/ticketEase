@@ -40,7 +40,7 @@ fun Route.favoriteRoute(){
             if (favorite == null) call.respond(HttpStatusCode.BadRequest,"Favorite isn't created.") else
                 call.respond(HttpStatusCode.Created,favorite)
         }
-        put("/buyerId/eventId/update"){
+        put("/update"){
             val parameters = call.receive<FavoriteDTO>()
             val favorite = favoriteService.updateFavorite(parameters)
             if (favorite == null) call.respond(HttpStatusCode.BadRequest,"Favorite isn't updated.") else

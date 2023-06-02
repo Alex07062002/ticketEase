@@ -27,6 +27,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     )
 
     private fun organizerDBToOrganizerWithoutPswd(rs : ResultRow) = OrganizerWithoutPswd(
+        id = rs[organizer.id].value,
         name = rs[organizer.name],
         surname = rs[organizer.surname],
         token = rs[organizer.password],
@@ -47,7 +48,7 @@ class OrganizerTransactionImpl : OrganizerTransaction {
     }
 
     override suspend fun selectByToken(token: String): OrganizerWithoutPswd?  = dbQuery{
-        organizer.slice(organizer.name,organizer.surname,organizer.email,
+        organizer.slice(organizer.id,organizer.name,organizer.surname,organizer.email,
             organizer.mobile,organizer.status,organizer.password).select(organizer.password eq token)
             .map(::organizerDBToOrganizerWithoutPswd).singleOrNull()
     }

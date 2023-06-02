@@ -6,7 +6,6 @@ import com.ticketEase.backend.DataClasses.Place.TypePlace
 import com.ticketEase.backend.PostgreSQL.Transactions.PlaceTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -45,11 +44,11 @@ fun Route.placeRoute(){
             placeService.delete(parameters.id)
             call.respond("Place is deleted.")
         }
-        post("/select/type") {
+        post("/type") {
             val parameters = call.receive<TypePlace>()
             call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(parameters.type))
         }
-        put("/id/update") {
+        put("/update") {
             val parameters = call.receive<PlaceDTO>()
             if (parameters.id == null) {
                 call.respond(HttpStatusCode.BadRequest, "Place isn't updated")
@@ -58,6 +57,11 @@ fun Route.placeRoute(){
                 if (place == null) call.respond(HttpStatusCode.BadRequest, "Place isn't updated") else
                 call.respond(HttpStatusCode.OK,place)
             }
+        }
+        post("/capacity"){
+            val parameters = call.receive<PlaceId>()
+            val capacity = placeService.capacity(parameters.id)
+            call.respond(HttpStatusCode.OK,capacity)
         }
     }
 }
