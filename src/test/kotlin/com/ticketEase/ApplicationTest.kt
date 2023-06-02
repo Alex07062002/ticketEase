@@ -1,6 +1,5 @@
 package com.ticketEase
 
-import com.ticketEase.backend.Auth.token.TokenConfig
 import com.ticketEase.backend.Routing.TOKEN_CONFIG
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -8,7 +7,6 @@ import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
 import com.ticketEase.plugins.*
-import io.ktor.server.application.*
 
 class ApplicationTest {
 

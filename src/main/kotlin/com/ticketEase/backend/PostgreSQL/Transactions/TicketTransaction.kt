@@ -2,7 +2,6 @@ package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Ticket.StatusTicket
 import com.example.DataClasses.Ticket.TicketDTO
-import org.jetbrains.exposed.sql.Query
 
 interface TicketTransaction : CRUDOperations<TicketDTO, Long>{
 

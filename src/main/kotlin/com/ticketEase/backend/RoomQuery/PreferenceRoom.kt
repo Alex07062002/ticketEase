@@ -1,7 +1,6 @@
 package com.ticketEase.backend.RoomQuery
 
 import com.example.DataClasses.Event.EventTable
-import com.example.DataClasses.Event.GenreList
 import com.example.DataClasses.Event.StatusEvent
 import com.example.DataClasses.Person.Cities
 import com.example.DataClasses.PlaceTable

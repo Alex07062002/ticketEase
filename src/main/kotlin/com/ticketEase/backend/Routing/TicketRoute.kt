@@ -9,7 +9,6 @@ import com.example.DataClasses.Ticket.TicketWithSeat
 import com.ticketEase.backend.PostgreSQL.Transactions.TicketTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

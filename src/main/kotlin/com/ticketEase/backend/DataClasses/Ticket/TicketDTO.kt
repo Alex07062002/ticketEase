@@ -2,7 +2,6 @@ package com.example.DataClasses.Ticket
 
 import com.example.DataClasses.Event.EventTable
 import com.example.DataClasses.Person.BuyerTable
-import com.ticketEase.backend.DataClasses.DateSerializer
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.javatime.timestamp

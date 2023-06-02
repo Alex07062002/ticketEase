@@ -1,11 +1,9 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
 import com.example.DataClasses.Event.*
-import com.example.DataClasses.Person.Cities
 import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
 import org.slf4j.LoggerFactory
 
 class EventTransactionImpl : EventTransaction {

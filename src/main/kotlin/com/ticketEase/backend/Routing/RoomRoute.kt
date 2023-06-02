@@ -1,7 +1,6 @@
 package com.ticketEase.backend.Routing
 
 import com.example.DataClasses.Person.BuyerCity
-import com.example.DataClasses.Person.Cities
 import com.example.DataClasses.Person.City
 import com.ticketEase.backend.DataClasses.TicketCountWithPrice
 import com.ticketEase.backend.RoomQuery.CatalogRoom

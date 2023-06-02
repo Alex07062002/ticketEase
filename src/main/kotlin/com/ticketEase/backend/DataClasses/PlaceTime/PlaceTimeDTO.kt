@@ -1,10 +1,6 @@
 package com.ticketEase.backend.DataClasses.PlaceTime
 
 import com.example.DataClasses.PlaceTable
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer
-import com.ticketEase.backend.DataClasses.DateSerializer
-import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant

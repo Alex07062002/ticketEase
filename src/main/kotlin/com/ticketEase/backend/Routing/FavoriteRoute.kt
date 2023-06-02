@@ -1,13 +1,11 @@
 package com.ticketEase.backend.Routing
 
-import com.example.DataClasses.Event.EventId
 import com.example.DataClasses.Favorites.FavoriteDTO
 import com.example.DataClasses.Favorites.FavoriteWithoutStatus
 import com.example.DataClasses.Person.BuyerId
 import com.ticketEase.backend.PostgreSQL.Transactions.FavoriteTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

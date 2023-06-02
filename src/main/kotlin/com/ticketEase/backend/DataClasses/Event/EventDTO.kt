@@ -19,9 +19,6 @@ data class EventDTO(val id : Long? = null,
 @Serializable
 data class EventId(val id : Long)
 
-@Serializable
-data class GenreTypeId(val genre : GenreList, val type : TypeList)
-
 object EventTable : LongIdTable("event"){
     val placeTimeId = long("placeTime_id").references(PlaceTimeTable.id)
     val organizerId = long("organizer_id").references(OrganizerTable.id)
