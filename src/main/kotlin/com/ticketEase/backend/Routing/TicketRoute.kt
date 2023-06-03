@@ -69,7 +69,7 @@ import io.ktor.server.routing.*
           }
           post("/eventId/soldTicket"){
               val parameters = call.receive<EventId>()
-              val countSoldTicket = ticketService.countSoldTicket(parameters.id, StatusTicket.SOLD)
+              val countSoldTicket = ticketService.countSoldTicket(parameters.id, StatusTicket.SALE)
               call.respond(HttpStatusCode.OK,countSoldTicket)
           }
           /**

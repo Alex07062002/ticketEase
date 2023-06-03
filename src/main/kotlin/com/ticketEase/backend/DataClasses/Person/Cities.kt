@@ -9,4 +9,4 @@ enum class Cities (val city : String) {
 }
 
 @Serializable
-data class City(val city : Cities)
+data class City(val city : String)
