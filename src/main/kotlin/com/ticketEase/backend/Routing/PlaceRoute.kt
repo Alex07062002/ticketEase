@@ -45,7 +45,7 @@ fun Route.placeRoute(){
             call.respond("Place is deleted.")
         }
         post("/type") {
-            val parameters = call.receive<TypePlace>()
+            val parameters = call.receive<TypePlace>() // TODO 02.06.2023
             call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(parameters.type))
         }
         put("/update") {
