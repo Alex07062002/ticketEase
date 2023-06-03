@@ -1,6 +1,7 @@
 package com.ticketEase.backend.Routing
 
 import com.example.DataClasses.Person.BuyerCity
+import com.example.DataClasses.Person.Cities
 import com.example.DataClasses.Person.City
 import com.ticketEase.backend.DataClasses.TicketCountWithPrice
 import com.ticketEase.backend.RoomQuery.CatalogRoom
@@ -21,7 +22,7 @@ fun Route.roomsRoute() {
     route("/room"){
         post("/catalog") {
             val parameters = call.receive<City>()
-            val listEvent = catalogRoom.catalogRoom(parameters.city)
+            val listEvent = catalogRoom.catalogRoom(Cities.valueOf(parameters.city))
             call.respond(HttpStatusCode.OK,listEvent)
         }
         post("/preferences") {
