@@ -15,8 +15,7 @@ enum class TypeOfPlace {
     }
 }
 
-@Serializable
-data class TypePlace(val type: TypeOfPlace)
+
 
 
 

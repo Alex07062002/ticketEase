@@ -1,5 +1,6 @@
 package com.ticketEase.backend.PostgreSQL.Transactions
 
+import com.example.DataClasses.Person.Cities
 import com.example.DataClasses.PlaceDTO
 import com.example.DataClasses.PlaceTable
 import com.ticketEase.backend.DataClasses.Place.TypeOfPlace
@@ -20,7 +21,8 @@ class PlaceTransactionImpl : PlaceTransaction {
         capacity = rs[place.capacity],
         numRow = rs[place.numRow],
         numColumn = rs[place.numColumn],
-        location = rs[place.location]
+        location = rs[place.location],
+        city = rs[place.city]
     )
 
     override suspend fun createPlace(placeAdd : PlaceDTO) : PlaceDTO? = dbQuery{
@@ -31,16 +33,18 @@ class PlaceTransactionImpl : PlaceTransaction {
             it[place.numRow] = placeAdd.numRow
             it[place.numColumn] = placeAdd.numColumn
             it[place.location] = placeAdd.location
+            it[place.city] = placeAdd.city
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::placeDBToPlaceEntity)
     }
 
-    override suspend fun selectOneOfTypePlace(type: TypeOfPlace): List<PlaceDTO>
+    override suspend fun selectOneOfTypePlace(type: TypeOfPlace, city : Cities): List<PlaceDTO>
     = dbQuery{
         logger.info("Place select by type place transaction is started.")
-        if (type == TypeOfPlace.WITH) place.select{place.numRow neq null;place.numColumn neq null}
-            .map(::placeDBToPlaceEntity) else
-        place.select{place.numRow eq null; place.numColumn eq null}.map(::placeDBToPlaceEntity)
+        if (type == TypeOfPlace.WITH) place.select{place.numRow neq null;place.numColumn neq null;
+            place.city eq city.toString() }.map(::placeDBToPlaceEntity) else
+        place.select{place.numRow eq null; place.numColumn eq null;place.city eq city.toString()}
+            .map(::placeDBToPlaceEntity)
     }
 
     override suspend fun updatePlace(placeUp : PlaceDTO): PlaceDTO? {
@@ -52,6 +56,7 @@ class PlaceTransactionImpl : PlaceTransaction {
                 it[this.numRow] = placeUp.numRow
                 it[this.numColumn] = placeUp.numColumn
                 it[this.location] = placeUp.location
+                it[this.city] = placeUp.city
             }
         }
        return placeUp.id?.let {selectById(it)}

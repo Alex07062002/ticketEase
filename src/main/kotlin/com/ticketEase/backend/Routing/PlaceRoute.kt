@@ -1,8 +1,9 @@
 package com.ticketEase.backend.Routing
 
+import com.example.DataClasses.Person.Cities
 import com.example.DataClasses.PlaceDTO
 import com.example.DataClasses.PlaceId
-import com.ticketEase.backend.DataClasses.Place.TypePlace
+import com.example.DataClasses.PlaceType
 import com.ticketEase.backend.PostgreSQL.Transactions.PlaceTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -45,8 +46,8 @@ fun Route.placeRoute(){
             call.respond("Place is deleted.")
         }
         post("/type") {
-            val parameters = call.receive<TypePlace>() // TODO 02.06.2023
-            call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(parameters.type))
+            val parameters = call.receive<PlaceType>()
+            call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(parameters.type, Cities.valueOf(parameters.city)))
         }
         put("/update") {
             val parameters = call.receive<PlaceDTO>()
