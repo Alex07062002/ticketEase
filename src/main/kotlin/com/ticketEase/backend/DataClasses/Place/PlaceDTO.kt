@@ -1,6 +1,5 @@
 package com.example.DataClasses
 
-import com.ticketEase.backend.DataClasses.Place.TypeOfPlace
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.LongIdTable
 
