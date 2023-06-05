@@ -74,7 +74,6 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
                     println("Entered hash: ${DigestUtils.sha256Hex("${organizer.secret}${parameters.password}")}, Hashed PW: ${organizer.password}")
                     call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
                 }
-
                 call.respond(
                     status = HttpStatusCode.OK,
                     message = OrganizerWithoutPswd(

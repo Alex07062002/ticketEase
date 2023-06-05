@@ -4,6 +4,7 @@ import com.example.DataClasses.Person.Cities
 import com.example.DataClasses.PlaceDTO
 import com.example.DataClasses.PlaceId
 import com.example.DataClasses.PlaceType
+import com.ticketEase.backend.DataClasses.Place.TypeOfPlace
 import com.ticketEase.backend.PostgreSQL.Transactions.PlaceTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -47,7 +48,8 @@ fun Route.placeRoute(){
         }
         post("/type") {
             val parameters = call.receive<PlaceType>()
-            call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(parameters.type, Cities.valueOf(parameters.city)))
+            call.respond(HttpStatusCode.OK, placeService.selectOneOfTypePlace(TypeOfPlace.valueOf(parameters.type),
+                Cities.valueOf(parameters.city)))
         }
         put("/update") {
             val parameters = call.receive<PlaceDTO>()

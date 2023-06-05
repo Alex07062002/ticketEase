@@ -9,6 +9,7 @@ import com.example.DataClasses.Ticket.TicketWithSeat
 import com.ticketEase.backend.PostgreSQL.Transactions.TicketTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -75,7 +76,7 @@ import io.ktor.server.routing.*
           /**
            * Filtration isn't realization
            */
-         /* post("/{eventId}/{status}/search"){
+         post("/{eventId}/{status}/search"){
               val eventId = call.parameters["eventId"] ?: kotlin.run{
                   throw NotFoundException("Not found ticket with this event id")
               }
@@ -95,6 +96,6 @@ import io.ktor.server.routing.*
               }
               val eventIdList = ticketService.filterEventByCost(lowCost.toDouble(),highCost.toDouble())
               call.respond(HttpStatusCode.OK,eventIdList)
-              }*/
+              }
           }
-      }
+

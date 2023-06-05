@@ -36,7 +36,8 @@ fun Route.placeTimeRoute(){
             route("/select") {
                 post("/date") {
                     val parameters = call.receive<PlaceTimeDate>()
-                    placeTimeService.selectIdByDate(parameters.date)
+                    val listTimesPlaces = placeTimeService.selectIdByDate(parameters.date)
+                    call.respond(HttpStatusCode.OK,listTimesPlaces)
                 }
                 post("/id/date") {
                     val parameters = call.receive<PlaceTimeId>()
@@ -44,7 +45,8 @@ fun Route.placeTimeRoute(){
                 }
                 post("/placeId") {
                     val parameters = call.receive<PlaceId>()
-                    placeTimeService.selectByPlace(parameters.id)
+                    val listTimesPlaces = placeTimeService.selectByPlace(parameters.id)
+                    call.respond(HttpStatusCode.OK,listTimesPlaces)
                 }
             }
                 put("/update") {

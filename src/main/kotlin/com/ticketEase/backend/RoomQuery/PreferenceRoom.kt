@@ -27,6 +27,7 @@ class PreferenceRoom{
     private val organizerService = OrganizerTransactionImpl()
 
    private fun toCatalogEntity(rs : ResultRow) = Catalog(
+       eventId = rs[event.id].value,
         name = rs[event.name],
         price = rs[ticket.price],
         location = rs[place.location],
@@ -40,10 +41,10 @@ class PreferenceRoom{
         val listOrganizerId : List<Long> = organizerService.selectOrganizerByCity(city)
         place.join(placeTime, JoinType.INNER, place.id, placeTime.placeId)
             .join(event, JoinType.INNER, placeTime.id, event.placeTimeId, additionalConstraint = {
-                event.organizerId inList listOrganizerId; event.genre inList genreList;
+                event.organizerId inList listOrganizerId; event.genre inList genreList
                 event.status eq StatusEvent.CREATED.toString() })
             .join(ticket, JoinType.INNER, event.id, ticket.eventId)
-            .slice(event.name, ticket.price, place.location, placeTime.date)
+            .slice(event.id,event.name, ticket.price, place.location, placeTime.date)
             .selectAll().map(::toCatalogEntity)
     }
 }

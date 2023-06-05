@@ -41,13 +41,6 @@ fun Route.eventRoute(){
                     call.respond(HttpStatusCode.Created, event)
             }
         }
-       /* post("/preferences"){
-            val parameters = call.receive<GenreTypeId>()
-            val eventList = eventService.selectEventByGenreOrType(
-                parameters.genre,
-                parameters.type)
-            call.respond(HttpStatusCode.OK,eventList)
-        }*/
         post("/placeTimeId"){
             val parameters = call.receive<PlaceTimeId>()
             val eventList = eventService.selectEventByPlaceTime(parameters.id)

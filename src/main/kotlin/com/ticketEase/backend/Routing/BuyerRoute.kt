@@ -9,6 +9,7 @@ import com.ticketEase.backend.Auth.token.TokenConfig
 import com.ticketEase.backend.PostgreSQL.Transactions.BuyerTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -87,17 +88,14 @@ fun Route.buyerRoute(tokenConfig: TokenConfig){
                 )
             }
         }
-        /**
-         * Deprecated -> filtration isn't realized
-         */
-       /* post("/{login}"){
+       post("/{login}"){
             val loginFromQuery = call.parameters["login"] ?: kotlin.run {
                 throw NotFoundException("Please provide a valid organizer id")
             }
             val response = buyerService.selectByLogin(loginFromQuery)
             if (response == null) call.respond(HttpStatusCode.OK, "Login not found") else
                 call.respond(HttpStatusCode.Conflict, "Login is created earlier")
-        }*/
+        }
         post("/login/check"){
             val parameters = call.receive<BuyerLogin>()
             val response = buyerService.checkByLogin(parameters.login)

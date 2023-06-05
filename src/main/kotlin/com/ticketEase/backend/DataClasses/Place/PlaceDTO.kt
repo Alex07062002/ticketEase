@@ -18,7 +18,8 @@ data class PlaceDTO(
 @Serializable
 data class PlaceId(val id : Long)
 
-data class PlaceType(val type: TypeOfPlace, val city : String)
+@Serializable
+data class PlaceType(val type: String, val city : String)
 
 object PlaceTable : LongIdTable("place"){
     val name = varchar("name", 50)
