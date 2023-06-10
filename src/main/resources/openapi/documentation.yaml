@@ -652,6 +652,15 @@ paths:
               $ref: "#/components/schemas/PlaceTimeDTO"
         required: true
       responses:
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid data"
         "400":
           description: "Bad Request"
           content:
@@ -661,8 +670,6 @@ paths:
               examples:
                 Example#1:
                   value: "PlaceTime isn't created."
-                Example#2:
-                  value: "Invalid data"
         "201":
           description: "Created"
           content:
@@ -739,6 +746,19 @@ paths:
             schema:
               $ref: "#/components/schemas/PlaceTimeId"
         required: true
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Instant"
   /placeTimes/select/placeId:
     post:
       description: ""
@@ -767,6 +787,15 @@ paths:
               $ref: "#/components/schemas/PlaceTimeDTO"
         required: true
       responses:
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid data"
         "400":
           description: "Bad Request"
           content:
@@ -776,8 +805,6 @@ paths:
               examples:
                 Example#1:
                   value: "PlaceTime isn't updated."
-                Example#2:
-                  value: "Invalid data"
         "200":
           description: "OK"
           content:
@@ -1056,6 +1083,23 @@ paths:
                 items:
                   type: "integer"
                   format: "int64"
+  /tickets/buyerId/count:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/BuyerId"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "integer"
+                format: "int64"
   /tickets/eventId:
     post:
       description: ""
