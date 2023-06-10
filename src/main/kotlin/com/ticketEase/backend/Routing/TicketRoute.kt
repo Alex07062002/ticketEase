@@ -51,6 +51,12 @@ import io.ktor.server.routing.*
               val ticketList = ticketService.selectEventByBuyer(parameters.id)
               call.respond(HttpStatusCode.OK, ticketList)
           }
+          post("/buyerId/count"){
+              val parameters = call.receive<BuyerId>()
+              val ticketList = ticketService.selectEventCountByBuyer(parameters.id)
+              call.respond(HttpStatusCode.OK, ticketList)
+          }
+
           post("/eventId"){
               val parameters = call.receive<EventId>()
               val ticket = ticketService.selectTicket(parameters.id,null,null)

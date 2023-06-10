@@ -41,7 +41,9 @@ fun Route.placeTimeRoute(){
                 }
                 post("/id/date") {
                     val parameters = call.receive<PlaceTimeId>()
-                    placeTimeService.selectDateById(parameters.id)
+                    val time = placeTimeService.selectDateById(parameters.id)
+                    if (time == null) call.respond(HttpStatusCode.NotFound) else
+                        call.respond(HttpStatusCode.OK, time)
                 }
                 post("/placeId") {
                     val parameters = call.receive<PlaceId>()
@@ -51,7 +53,7 @@ fun Route.placeTimeRoute(){
             }
                 put("/update") {
                     val parameters = call.receive<PlaceTimeDTO>()
-                    if (parameters.id == null) call.respond(HttpStatusCode.BadRequest, "Invalid data") else {
+                    if (parameters.id == null) call.respond(HttpStatusCode.Conflict, "Invalid data") else {
                         val placeTime = placeTimeService.updatePlaceTime(parameters)
                         if (placeTime == null) call.respond(HttpStatusCode.BadRequest, "PlaceTime isn't updated.") else
                             call.respond(HttpStatusCode.OK, placeTime)
@@ -59,7 +61,7 @@ fun Route.placeTimeRoute(){
                 }
             post("/create") {
                 val parameters = call.receive<PlaceTimeDTO>()
-                if (parameters.id != null) call.respond(HttpStatusCode.BadRequest, "Invalid data") else {
+                if (parameters.id != null) call.respond(HttpStatusCode.Conflict, "Invalid data") else {
                     val placeTime = placeTimeService.createPlaceTime(parameters)
                     if (placeTime == null) call.respond(HttpStatusCode.BadRequest, "PlaceTime isn't created.") else
                         call.respond(HttpStatusCode.Created, placeTime)

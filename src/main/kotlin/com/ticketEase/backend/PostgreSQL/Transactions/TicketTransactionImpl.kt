@@ -30,6 +30,11 @@ class TicketTransactionImpl : TicketTransaction {
         ticket.slice(ticket.eventId).select{ticket.buyerId eq buyerId}.map { it[ticket.eventId] }
     }
 
+    override suspend fun selectEventCountByBuyer(buyerId: Long): Long  = dbQuery{
+        logger.info("Ticket select count event by buyer id $buyerId transaction is started")
+        ticket.select{ticket.buyerId eq buyerId}.count()
+    }
+
     override suspend fun selectTicket(eventId: Long, row: Int?, column: Int?): TicketDTO? = dbQuery{
         logger.info("Ticket select by event $eventId transaction is started.")
         ticket.select{ticket.eventId eq eventId; ticket.row eq row; ticket.column eq column}

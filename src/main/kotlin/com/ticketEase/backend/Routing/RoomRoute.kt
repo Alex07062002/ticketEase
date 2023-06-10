@@ -43,6 +43,5 @@ fun Route.roomsRoute() {
             val ticket = ticketRoom.ticketRoom(parameters.id)
             call.respond(HttpStatusCode.OK,ticket)
         }
-
     }
 }
