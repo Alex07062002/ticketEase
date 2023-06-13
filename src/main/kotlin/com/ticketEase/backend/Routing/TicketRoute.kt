@@ -2,10 +2,7 @@ package com.ticketEase.backend.Routing
 
 import com.example.DataClasses.Event.EventId
 import com.example.DataClasses.Person.BuyerId
-import com.example.DataClasses.Ticket.StatusTicket
-import com.example.DataClasses.Ticket.TicketDTO
-import com.example.DataClasses.Ticket.TicketId
-import com.example.DataClasses.Ticket.TicketWithSeat
+import com.example.DataClasses.Ticket.*
 import com.ticketEase.backend.PostgreSQL.Transactions.TicketTransactionImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -46,6 +43,13 @@ import io.ktor.server.routing.*
                       call.respond(HttpStatusCode.OK, ticket)
               }
           }
+
+          put("/updateTicket"){
+              val parameters = call.receive<TicketUpdate>()
+              ticketService.updateBuyerId(parameters.buyerId,parameters.eventId)
+              call.respond(HttpStatusCode.OK)
+              }
+
           post("/buyerId"){
               val parameters = call.receive<BuyerId>()
               val ticketList = ticketService.selectEventByBuyer(parameters.id)

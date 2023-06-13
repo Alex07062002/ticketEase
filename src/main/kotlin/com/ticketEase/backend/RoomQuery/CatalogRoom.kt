@@ -11,6 +11,7 @@ import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
 import com.ticketEase.backend.PostgreSQL.Transactions.*
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class CatalogRoom {
@@ -33,8 +34,8 @@ class CatalogRoom {
         place.join(placeTime,JoinType.INNER,place.id,placeTime.placeId)
             .join(event, JoinType.INNER,placeTime.id,event.placeTimeId, additionalConstraint = {
                 event.organizerId inList listOrganizerId;event.status eq StatusEvent.CREATED.toString()})
-            .join(ticket,JoinType.INNER,event.id,ticket.eventId)
+            .join(ticket,JoinType.LEFT,event.id,ticket.eventId)
             .slice(event.id,event.name,ticket.price,place.location,placeTime.date)
-            .selectAll().map(::toCatalogEntity)
+            .selectAll().withDistinct(true).map(::toCatalogEntity)
     }
 }

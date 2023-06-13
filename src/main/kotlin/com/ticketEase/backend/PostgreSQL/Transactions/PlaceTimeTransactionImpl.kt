@@ -34,7 +34,7 @@ class PlaceTimeTransactionImpl: PlaceTimeTransaction {
 
     override suspend fun selectByPlace(placeId: Long): List<PlaceTimeDTO> = dbQuery {
         logger.info("PlaceTime select by place $placeId transaction is started.")
-        placeTime.select(placeTime.placeId eq placeId).map(::placeTimeDBToPlaceTimeEntity)
+        placeTime.select{placeTime.placeId eq placeId;placeTime.status eq StatusPlaceTime.FREE.toString()}.map(::placeTimeDBToPlaceTimeEntity)
     }
 
     override suspend fun updatePlaceTime(placeTimeDTO: PlaceTimeDTO): PlaceTimeDTO? {

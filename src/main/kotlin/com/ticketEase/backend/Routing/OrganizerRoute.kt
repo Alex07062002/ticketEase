@@ -50,16 +50,16 @@ fun Route.organizerRoute(tokenConfig: TokenConfig){
         post("/token"){
             val parameters = call.receive<OrganizerResponse>()
             val organizer = organizerService.selectByToken(parameters.token)
-            if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Buyer isn't found.") else
+            if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't found.") else
                 call.respond(HttpStatusCode.OK,organizer)
         }
         put("/update"){
             val parameters = call.receive<OrganizerWithoutPswd>()
             val organizer = organizerService.updateParamsOrganizer(parameters)
             if (organizer == null) call.respond(HttpStatusCode.BadRequest,"Organizer isn't updated.") else
-                call.respond(HttpStatusCode.OK,OrganizerResponse(organizer.token))
+                call.respond(HttpStatusCode.OK,organizer)
         }
-        put("/signIn") {
+        post ("/signIn") {
             val parameters = call.receive<OrganizerRequest>()
             val organizer = organizerService.selectByLogin(parameters.login)
             if (organizer?.secret == null) call.respond(HttpStatusCode.Conflict, "Invalid parameters.") else {

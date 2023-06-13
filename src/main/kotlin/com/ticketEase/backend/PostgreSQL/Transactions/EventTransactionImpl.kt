@@ -18,7 +18,7 @@ class EventTransactionImpl : EventTransaction {
         name = rs[event.name],
         genre = GenreList.valueOf(rs[event.genre]),
         type = TypeList.valueOf(rs[event.type]),
-        status = StatusEvent.valueOf(rs[event.status]),
+        status = rs[event.status],
         nameGroup = rs[event.nameGroup],
         description = rs[event.description]
     )

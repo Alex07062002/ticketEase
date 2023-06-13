@@ -45,6 +45,6 @@ class PreferenceRoom{
                 event.status eq StatusEvent.CREATED.toString() })
             .join(ticket, JoinType.INNER, event.id, ticket.eventId)
             .slice(event.id,event.name, ticket.price, place.location, placeTime.date)
-            .selectAll().map(::toCatalogEntity)
+            .selectAll().withDistinct(true).map(::toCatalogEntity)
     }
 }

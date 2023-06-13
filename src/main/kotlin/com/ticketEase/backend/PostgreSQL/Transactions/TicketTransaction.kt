@@ -22,5 +22,7 @@ interface TicketTransaction : CRUDOperations<TicketDTO, Long>{
 
     suspend fun delete(id : Long) : Boolean
 
-    suspend fun countSoldTicket(eventId: Long, status: StatusTicket = StatusTicket.SOLD) : Long
+    suspend fun countSoldTicket(eventId: Long, status: StatusTicket = StatusTicket.SALE) : Long
+
+    suspend fun updateBuyerId(buyerId: Long, eventId: Long)
 }

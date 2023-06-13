@@ -7,6 +7,7 @@ import com.ticketEase.backend.PostgreSQL.DatabaseFactory.DataBaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.LoggerFactory
+import java.time.Instant
 
 
 class TicketTransactionImpl : TicketTransaction {
@@ -87,6 +88,15 @@ class TicketTransactionImpl : TicketTransaction {
 
     override suspend fun countSoldTicket(eventId: Long, status: StatusTicket): Long = dbQuery {
         ticket.select{ticket.eventId eq eventId;ticket.status eq status.toString()}.count()
+    }
+
+    override suspend fun updateBuyerId(buyerId: Long, eventId: Long): Unit = dbQuery{
+        val id = ticket.slice(ticket.id).select{ticket.eventId eq eventId;ticket.buyerId eq null}.map{it[ticket.id].value}[0]
+        ticket.update({ ticket.id eq id }) {
+            it[this.status] = StatusTicket.SOLD.toString()
+            it[this.buyerId] = buyerId
+            it[this.orderDate] = Instant.now()
+        }
     }
 
     override suspend fun selectById(id: Long): TicketDTO? = dbQuery {

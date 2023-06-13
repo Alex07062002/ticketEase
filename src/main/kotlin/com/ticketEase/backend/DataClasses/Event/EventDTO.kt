@@ -12,7 +12,7 @@ data class EventDTO(val id : Long? = null,
                     val name : String,
                     val genre : GenreList,
                     val type : TypeList,
-                    val status : StatusEvent = StatusEvent.CREATED,
+                    val status : String = StatusEvent.CREATED.toString(),
                     val nameGroup : String? = null,
                     val description : String? = null)
 

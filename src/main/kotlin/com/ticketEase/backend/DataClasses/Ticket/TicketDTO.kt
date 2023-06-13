@@ -23,6 +23,9 @@ data class TicketId(val id : Long)
 @Serializable
 data class TicketWithSeat(val id : Long, val row : Int, val column : Int)
 
+@Serializable
+data class TicketUpdate(val buyerId: Long, val eventId: Long)
+
 object TicketTable : LongIdTable("ticket"){
     val eventId = long("event_id").references(EventTable.id)
     val buyerId = long("buyer_id").references(BuyerTable.id).nullable()
