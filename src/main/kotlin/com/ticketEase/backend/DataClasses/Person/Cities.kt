@@ -3,9 +3,9 @@ package com.example.DataClasses.Person
 import kotlinx.serialization.Serializable
 
 enum class Cities (val city : String) {
-    Voronezh("Воронеж"),
-    Moscow("Москва"),
-    SaintPetersburg("Санкт-Петербург")
+    Воронеж("Воронеж"),
+    Москва("Москва"),
+    Санкт_Петербург("Санкт-Петербург")
 }
 
 @Serializable

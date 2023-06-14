@@ -6,6 +6,7 @@ import com.example.DataClasses.Person.OrganizerTable
 import com.example.DataClasses.PlaceTable
 import com.example.DataClasses.Ticket.TicketTable
 import com.ticketEase.backend.DataClasses.PlaceTime.PlaceTimeTable
+import io.ktor.server.config.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -14,12 +15,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DataBaseFactory {
 
-    fun init() {
-        val driverClassName = DRIVER_CLASS_NAME
-        val jdbcURL = JDBC_URL
-        val user = USER
-        val password = PASSWORD
-        val database = Database.connect(jdbcURL, driverClassName,user, password)
+    fun init(config : ApplicationConfig) {
+        val driverClassName = config.property("storage.driverClassName").getString()
+        val jdbcURL = config.property("storage.jdbcURL").getString()
+        val database = Database.connect(jdbcURL, driverClassName)
         transaction(database) {
             SchemaUtils.create(OrganizerTable, EventTable, FavoriteTable, OrganizerTable, PlaceTimeTable,
                 PlaceTable, TicketTable)

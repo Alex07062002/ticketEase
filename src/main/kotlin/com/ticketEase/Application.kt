@@ -19,7 +19,7 @@ fun main() {
 
 fun Application.module() {
 
-    DataBaseFactory.init()
+    DataBaseFactory.init(config)
     val tokenConfig = TokenConfig(
         issuer = config.property("jwt.issuer").getString(),
         audience = config.property("jwt.audience").getString(),
